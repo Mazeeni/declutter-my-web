@@ -3,7 +3,7 @@
   "name": "Wired Declutterer",
   "version": "1.0",
 
-  "description": "Addon for decluttering article pages on wired.com, allowing for distraction-free and customisable reading.",
+  "description": "Declutter article pages on wired.com, allowing for distraction-free and customisable reading.",
   "homepage_url": "https://github.com/Mazeeni/wired-declutterer",
   "icons": {
     "48": "icons/wire-cutter.svg",
