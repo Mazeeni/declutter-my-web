@@ -10,7 +10,7 @@
     "96": "icons/wire-cutter.svg"
   },
 
-  "permissions": ["activeTab", "tabs"],
+  "permissions": ["activeTab", "tabs", "storage"],
 
   "browser_action": {
     "default_icon": "icons/wire-cutter.svg",
