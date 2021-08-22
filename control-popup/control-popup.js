@@ -1,29 +1,15 @@
-const hidePage = `body > :not(.l-col__main) {
-  display: none;
-}`;
+// const hidePageCSS = `body > :not(.l-col__main) {
+//   visibility: hidden;
+// }`;
 
-const hideAll = `* {
-  visibility: hidden;
-} `;
-
-const classesToShow = ["c-entry-hero"];
-
-console.log("We begin");
-
-function checkIsFocus() {
-  const isFocus = browser.storage.sync.get("isFocus");
-  isFocus.then((f) => {
-    if (!f) {
-      console.log("No current focus found, proof: " + false);
-      console.log("Initialising isFocus");
-      browser.storage.sync.set({
-        isFocus: false,
-      });
-    } else {
-      console.log("Focus found: ");
-      console.log(f.isFocus);
-    }
-  });
+function hideElemByClassCSS(cclass) {
+  return (
+    `.` +
+    cclass +
+    `{
+    visibility: hidden;
+  }`
+  );
 }
 
 function listenForClicks() {
@@ -31,6 +17,8 @@ function listenForClicks() {
     function switchFocus() {
       const isFocus = browser.storage.sync.get("isFocus");
       isFocus.then((f) => {
+        // safe access as f will be an empty object if not defined
+        // and f.isFocus will return undefined.
         if (f.isFocus) {
           console.log("Switching focus off");
           focusOff();
@@ -43,7 +31,10 @@ function listenForClicks() {
 
     // removes unnecessary elements
     function focusOn() {
-      browser.tabs.insertCSS({ code: hideAll });
+      browser.tabs.insertCSS({ code: hideElemByClassCSS("c-global-header") });
+      browser.tabs.insertCSS({
+        code: hideElemByClassCSS("c-newsletter_signup_box__main"),
+      });
       browser.storage.sync.set({
         isFocus: true,
       });
@@ -51,7 +42,10 @@ function listenForClicks() {
 
     // shows previously removed elements
     function focusOff() {
-      browser.tabs.removeCSS({ code: hideAll });
+      browser.tabs.removeCSS({ code: hideElemByClassCSS("c-global-header") });
+      browser.tabs.removeCSS({
+        code: hideElemByClassCSS("c-newsletter_signup_box__main"),
+      });
       browser.storage.sync.set({
         isFocus: false,
       });
@@ -95,8 +89,6 @@ function reportExecuteScriptError(error) {
  */
 function onGot(tabInfo) {
   if (tabInfo[0].url.includes("theverge.com/20")) {
-    checkIsFocus();
-
     browser.tabs
       .executeScript({ file: "../declutterer/declutterer.js" })
       .then(listenForClicks)
