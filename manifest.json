@@ -10,10 +10,11 @@
     "96": "icons/wire-cutter.svg"
   },
 
-  "content_scripts": [
-    {
-      "matches": ["*://*.wired.com/story/*"],
-      "js": ["control/control.js"]
-    }
-  ]
+  "permissions": ["activeTab"],
+
+  "browser_action": {
+    "default_icon": "icons/wire-cutter.svg",
+    "default_title": "Wire Declutterer",
+    "default_popup": "control-popup/control-popup.html"
+  }
 }
