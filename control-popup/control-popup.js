@@ -32,15 +32,43 @@ function listenForClicks() {
   });
 }
 
-function reportExecuteScriptError(error) {
+/**
+ * Displays message to user that addon is unsupported on current
+ * page.
+ */
+function disableAddonOptions() {
   document.querySelector("#popup-content").classList.add("hidden");
   document.querySelector("#error-content").classList.remove("hidden");
+}
+
+function reportExecuteScriptError(error) {
+  disableAddonOptions();
   console.error(
     `Failed to execute declutterer content script: ${error.message}`
   );
 }
 
-browser.tabs
-  .executeScript({ file: "../declutterer/declutterer.js" })
-  .then(listenForClicks)
-  .catch(reportExecuteScriptError);
+/**
+ * Checks if current tab is a supported page for addon.
+ */
+function onGot(tabInfo) {
+  console.log("Tab info: " + tabInfo[0].url);
+  if (tabInfo[0].url.includes("theverge.com/20")) {
+    browser.tabs
+      .executeScript({ file: "../declutterer/declutterer.js" })
+      .then(listenForClicks)
+      .catch(reportExecuteScriptError);
+  } else {
+    hideOptions();
+  }
+}
+
+function onError(error) {
+  console.log(`Error: ${error}`);
+}
+
+const gettingCurrent = browser.tabs.query({
+  currentWindow: true,
+  active: true,
+});
+gettingCurrent.then(onGot, onError);

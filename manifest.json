@@ -1,16 +1,16 @@
 {
   "manifest_version": 2,
-  "name": "Wired Declutterer",
+  "name": "Verge Declutterer",
   "version": "1.0",
 
-  "description": "Declutter article pages on wired.com, allowing for distraction-free and customisable reading.",
+  "description": "Declutter article pages on theverge.com, allowing for distraction-free and customisable reading.",
   "homepage_url": "https://github.com/Mazeeni/wired-declutterer",
   "icons": {
     "48": "icons/wire-cutter.svg",
     "96": "icons/wire-cutter.svg"
   },
 
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab", "tabs"],
 
   "browser_action": {
     "default_icon": "icons/wire-cutter.svg",
