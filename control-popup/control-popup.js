@@ -2,25 +2,42 @@ const hidePage = `body > :not(.l-col__main) {
   display: none;
 }`;
 
+const hideAll = `* {
+  visibility: hidden;
+} `;
+
+const classesToShow = ["c-entry-hero"];
+
 console.log("We begin");
 var isFocus = false;
 
 function listenForClicks() {
   document.addEventListener("click", (e) => {
+    console.log("Current focus: " + isFocus);
     function switchFocus() {
       if (isFocus) {
+        console.log("Switching focus off");
         focusOff();
       } else {
+        console.log("Switching focus on");
         focusOn();
       }
     }
 
+    // removes unnecessary elements
     function focusOn() {
-      browser.tabs.insertCSS({ code: hidePage });
+      browser.tabs.insertCSS({ code: hideAll });
     }
 
+    // shows previously removed elements
     function focusOff() {
-      browser.tabs.removeCSS({ code: hidepage });
+      browser.tabs.removeCSS({ code: hideAll });
+    }
+
+    function reportError() {
+      console.error(
+        `Could not switch focus ` + !isFocus`successfully: ${error}`
+      );
     }
 
     if (e.target.classList.contains("power-button")) {
@@ -28,6 +45,8 @@ function listenForClicks() {
         .query({ active: true, currentWindow: true })
         .then(switchFocus)
         .catch(reportError);
+    } else {
+      console.log("Button didn't trigger correctly");
     }
   });
 }
@@ -59,7 +78,7 @@ function onGot(tabInfo) {
       .then(listenForClicks)
       .catch(reportExecuteScriptError);
   } else {
-    hideOptions();
+    disableAddonOptions();
   }
 }
 
