@@ -9,29 +9,52 @@ const hideAll = `* {
 const classesToShow = ["c-entry-hero"];
 
 console.log("We begin");
-var isFocus = false;
+
+function checkIsFocus() {
+  const isFocus = browser.storage.sync.get("isFocus");
+  isFocus.then((f) => {
+    if (!f) {
+      console.log("No current focus found, proof: " + false);
+      console.log("Initialising isFocus");
+      browser.storage.sync.set({
+        isFocus: false,
+      });
+    } else {
+      console.log("Focus found: ");
+      console.log(f.isFocus);
+    }
+  });
+}
 
 function listenForClicks() {
   document.addEventListener("click", (e) => {
-    console.log("Current focus: " + isFocus);
     function switchFocus() {
-      if (isFocus) {
-        console.log("Switching focus off");
-        focusOff();
-      } else {
-        console.log("Switching focus on");
-        focusOn();
-      }
+      const isFocus = browser.storage.sync.get("isFocus");
+      isFocus.then((f) => {
+        if (f.isFocus) {
+          console.log("Switching focus off");
+          focusOff();
+        } else {
+          console.log("Switching focus on");
+          focusOn();
+        }
+      });
     }
 
     // removes unnecessary elements
     function focusOn() {
       browser.tabs.insertCSS({ code: hideAll });
+      browser.storage.sync.set({
+        isFocus: true,
+      });
     }
 
     // shows previously removed elements
     function focusOff() {
       browser.tabs.removeCSS({ code: hideAll });
+      browser.storage.sync.set({
+        isFocus: false,
+      });
     }
 
     function reportError() {
@@ -71,8 +94,9 @@ function reportExecuteScriptError(error) {
  * Checks if current tab is a supported page for addon.
  */
 function onGot(tabInfo) {
-  console.log("Tab info: " + tabInfo[0].url);
   if (tabInfo[0].url.includes("theverge.com/20")) {
+    checkIsFocus();
+
     browser.tabs
       .executeScript({ file: "../declutterer/declutterer.js" })
       .then(listenForClicks)
