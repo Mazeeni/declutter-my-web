@@ -1,8 +1,9 @@
-const hidePage = `body > :not(.article) {
+const hidePage = `body > :not(.l-col__main) {
   display: none;
 }`;
+
 console.log("We begin");
-const isFocus = false;
+var isFocus = false;
 
 function listenForClicks() {
   document.addEventListener("click", (e) => {
@@ -16,7 +17,6 @@ function listenForClicks() {
 
     function focusOn() {
       browser.tabs.insertCSS({ code: hidePage });
-      console.log("hi");
     }
 
     function focusOff() {
