@@ -23,6 +23,8 @@ const elemClassesToHide = [
   "c-footer",
   "c-nextclick",
   "tab-bar-fixed",
+  "connatix-feature-desktop-packaged-content",
+  "c-comments",
 ];
 
 function listenForClicks() {
@@ -47,7 +49,6 @@ function listenForClicks() {
       elemClassesToHide.forEach((c) => {
         browser.tabs.insertCSS({ code: hideElemByClassCSS(c) });
       });
-      // browser.tabs.insertCSS({ code: hideElemByClassCSS("c-global-header") });
       browser.storage.sync.set({
         isFocus: true,
       });
@@ -58,10 +59,6 @@ function listenForClicks() {
       elemClassesToHide.forEach((c) => {
         browser.tabs.removeCSS({ code: hideElemByClassCSS(c) });
       });
-      // browser.tabs.removeCSS({ code: hideElemByClassCSS("c-global-header") });
-      // browser.tabs.removeCSS({
-      //   code: hideElemByClassCSS("c-newsletter_signup_box__main"),
-      // });
       browser.storage.sync.set({
         isFocus: false,
       });
