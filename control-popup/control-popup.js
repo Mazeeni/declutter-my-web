@@ -12,6 +12,19 @@ function hideElemByClassCSS(cclass) {
   );
 }
 
+const elemClassesToHide = [
+  "c-global-header",
+  "l-col__sidebar",
+  "c-social-buttons",
+  "m-ad",
+  "connatix-article-desktop",
+  "ob-widget-section",
+  "c-tab-bar",
+  "c-footer",
+  "c-nextclick",
+  "tab-bar-fixed",
+];
+
 function listenForClicks() {
   document.addEventListener("click", (e) => {
     function switchFocus() {
@@ -31,10 +44,10 @@ function listenForClicks() {
 
     // removes unnecessary elements
     function focusOn() {
-      browser.tabs.insertCSS({ code: hideElemByClassCSS("c-global-header") });
-      browser.tabs.insertCSS({
-        code: hideElemByClassCSS("c-newsletter_signup_box__main"),
+      elemClassesToHide.forEach((c) => {
+        browser.tabs.insertCSS({ code: hideElemByClassCSS(c) });
       });
+      // browser.tabs.insertCSS({ code: hideElemByClassCSS("c-global-header") });
       browser.storage.sync.set({
         isFocus: true,
       });
@@ -42,10 +55,13 @@ function listenForClicks() {
 
     // shows previously removed elements
     function focusOff() {
-      browser.tabs.removeCSS({ code: hideElemByClassCSS("c-global-header") });
-      browser.tabs.removeCSS({
-        code: hideElemByClassCSS("c-newsletter_signup_box__main"),
+      elemClassesToHide.forEach((c) => {
+        browser.tabs.removeCSS({ code: hideElemByClassCSS(c) });
       });
+      // browser.tabs.removeCSS({ code: hideElemByClassCSS("c-global-header") });
+      // browser.tabs.removeCSS({
+      //   code: hideElemByClassCSS("c-newsletter_signup_box__main"),
+      // });
       browser.storage.sync.set({
         isFocus: false,
       });
