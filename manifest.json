@@ -23,5 +23,9 @@
     "default_icon": "icons/wire-cutter.svg",
     "default_title": "Wire Declutterer",
     "default_popup": "control-popup/control-popup.html"
+  },
+
+  "background": {
+    "scripts": ["background/background.js"]
   }
 }
