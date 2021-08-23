@@ -7,7 +7,7 @@ function hideElemByClassCSS(cclass) {
     `.` +
     cclass +
     `{
-    visibility: hidden;
+    display: none;
   }`
   );
 }
