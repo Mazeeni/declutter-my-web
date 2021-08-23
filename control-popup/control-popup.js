@@ -104,7 +104,7 @@ function reportExecuteScriptError(error) {
  * Checks if current tab is a supported page for addon.
  */
 function onGot(tabInfo) {
-  if (tabInfo[0].url.includes("theverge.com/20")) {
+  if (tabInfo[0].url.includes("theverge.com/2")) {
     browser.tabs
       .executeScript({ file: "../declutterer/declutterer.js" })
       .then(listenForClicks)
