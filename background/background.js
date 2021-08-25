@@ -16,6 +16,8 @@ const elemClassesToHide = [
   "c-social-buttons",
   "m-ad",
   "connatix-article-desktop",
+  "connatix-feature-desktop",
+  "c-recirc-module",
   "ob-widget-section",
   "c-tab-bar",
   "c-footer",
@@ -50,7 +52,7 @@ function updateFocus() {
   const allTabs = browser.tabs.query({});
   allTabs.then((allTabs) =>
     allTabs.forEach((tab) => {
-      if (tab.url.includes("theverge.com/2")) {
+      if (tab.url.includes("theverge.com/")) {
         isFocus.then((f) => {
           if (f.isFocus) {
             focusOn(tab);
