@@ -23,6 +23,7 @@ const elemClassesToHide = [
   "tab-bar-fixed",
   "connatix-feature-desktop-packaged-content",
   "c-comments",
+  "p-comment-notification",
 ];
 
 /**

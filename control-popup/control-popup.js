@@ -2,6 +2,17 @@
  * Script running in the toolbar popup.
  */
 
+function updateButtonColor() {
+  const isFocus = browser.storage.sync.get("isFocus");
+  isFocus.then((f) => {
+    if (f.isFocus) {
+      document.getElementById("power-button").src = "../icons/power-on.svg";
+    } else {
+      document.getElementById("power-button").src = "../icons/power-off.svg";
+    }
+  });
+}
+
 function listenForClicks() {
   document.addEventListener("click", (e) => {
     function reportError() {
@@ -26,6 +37,7 @@ function listenForClicks() {
             isFocus: true,
           });
         }
+        updateButtonColor();
       });
     }
 
@@ -70,6 +82,7 @@ function onError(error) {
   console.log(`Error: ${error}`);
 }
 
+updateButtonColor();
 const gettingCurrent = browser.tabs.query({
   currentWindow: true,
   active: true,
