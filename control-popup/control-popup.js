@@ -2,10 +2,56 @@
  * Script running in the toolbar popup.
  */
 
-function updateButtonColor() {
-  const isFocus = browser.storage.sync.get("isFocus");
-  isFocus.then((f) => {
-    if (f.isFocus) {
+function hideElemByClassCSS(cclass) {
+  return (
+    `.` +
+    cclass +
+    `{
+      display: none;
+    }`
+  );
+}
+
+const elemClassesToHide = [
+  "c-global-header",
+  "l-col__sidebar",
+  "c-social-buttons",
+  "m-ad",
+  "connatix-article-desktop",
+  "connatix-feature-desktop",
+  "c-recirc-module",
+  "ob-widget-section",
+  "c-tab-bar",
+  "c-footer",
+  "c-nextclick",
+  "tab-bar-fixed",
+  "connatix-feature-desktop-packaged-content",
+  "c-comments",
+  "p-comment-notification",
+];
+
+// debug print all storage
+const allStorage = browser.storage.local.get();
+allStorage.then((s) => console.log(s));
+
+/**
+ * Creates new profile for tab in storage.
+ */
+function initialiseStorageIfEmpty(tab) {
+  const isModeOn = browser.storage.local.get(tab.url);
+  isModeOn.then((m) => {
+    if (Object.keys(m).length === 0) {
+      browser.storage.local.set({
+        [tab.url]: false,
+      });
+    }
+  });
+}
+
+function updateButtonColor(tab) {
+  const isModeOn = browser.storage.local.get(tab.url);
+  isModeOn.then((m) => {
+    if (m[tab.url]) {
       document.getElementById("power-button").src = "../icons/power-on.svg";
     } else {
       document.getElementById("power-button").src = "../icons/power-off.svg";
@@ -13,7 +59,7 @@ function updateButtonColor() {
   });
 }
 
-function listenForClicks() {
+function listenForClicks(tab) {
   document.addEventListener("click", (e) => {
     function reportError() {
       console.error(
@@ -22,22 +68,42 @@ function listenForClicks() {
     }
 
     function switchFocus() {
-      const isFocus = browser.storage.sync.get("isFocus");
-      isFocus.then((f) => {
+      const isModeOn = browser.storage.local.get(tab.url);
+
+      isModeOn.then((m) => {
         // safe access as f will be an empty object if not defined
         // and f.isFocus will return undefined.
-        if (f.isFocus) {
+        console.log("mode currently:");
+        console.log(m);
+
+        if (m[tab.url]) {
           console.log("Switching focus off");
-          browser.storage.sync.set({
-            isFocus: false,
+          browser.storage.local.set({
+            [tab.url]: false,
           });
+          unfocusCSS();
         } else {
           console.log("Switching focus on");
-          browser.storage.sync.set({
-            isFocus: true,
+          browser.storage.local.set({
+            [tab.url]: true,
           });
+          focusCSS();
         }
-        updateButtonColor();
+        updateButtonColor(tab);
+      });
+    }
+
+    // removes unnecessary elements
+    function focusCSS() {
+      elemClassesToHide.forEach((c) => {
+        browser.tabs.insertCSS(tab.id, { code: hideElemByClassCSS(c) });
+      });
+    }
+
+    // shows previously removed elements
+    function unfocusCSS() {
+      elemClassesToHide.forEach((c) => {
+        browser.tabs.removeCSS(tab.id, { code: hideElemByClassCSS(c) });
       });
     }
 
@@ -67,12 +133,11 @@ function reportExecuteScriptError(error) {
  * Checks if current tab is a supported page for addon.
  */
 function onGot(tabInfo) {
-  if (tabInfo[0].url.includes("theverge.com/")) {
-    // browser.tabs.
-    // .executeScript({ file: "../declutterer/declutterer.js" })
-    // .then(listenForClicks)
-    // .catch(reportExecuteScriptError);
-    listenForClicks();
+  const curTab = tabInfo[0];
+  if (curTab.url.includes("theverge.com/")) {
+    initialiseStorageIfEmpty(curTab);
+    updateButtonColor(curTab);
+    listenForClicks(curTab);
   } else {
     disableAddonOptions();
   }
@@ -82,9 +147,8 @@ function onError(error) {
   console.log(`Error: ${error}`);
 }
 
-updateButtonColor();
-const gettingCurrent = browser.tabs.query({
+const currentTab = browser.tabs.query({
   currentWindow: true,
   active: true,
 });
-gettingCurrent.then(onGot, onError);
+currentTab.then(onGot, onError);
