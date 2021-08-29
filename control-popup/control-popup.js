@@ -61,12 +61,6 @@ function updateButtonColor(tab) {
 
 function listenForClicks(tab) {
   document.addEventListener("click", (e) => {
-    function reportError() {
-      console.error(
-        `Could not switch focus ` + !isFocus`successfully: ${error}`
-      );
-    }
-
     function switchFocus() {
       const isModeOn = browser.storage.local.get(tab.url);
 
