@@ -38,20 +38,23 @@ allStorage.then((s) => console.log(s));
  * Creates new profile for tab in storage.
  */
 function initialiseStorageIfEmpty(tab) {
-  const isModeOn = browser.storage.local.get(tab.url);
-  isModeOn.then((m) => {
-    if (Object.keys(m).length === 0) {
+  const allPages = browser.storage.local.get("pageSettings" + tab.url);
+  allPages.then((pgs) => {
+    const curPage = pgs.allPagesSettings[tab.url];
+    if (curPage === undefined) {
+      console.log("memory initialised");
       browser.storage.local.set({
-        [tab.url]: false,
+        allPagesSettings: { [tab.url]: { isModeOn: false } },
       });
     }
   });
 }
 
 function updateButtonColor(tab) {
-  const isModeOn = browser.storage.local.get(tab.url);
-  isModeOn.then((m) => {
-    if (m[tab.url]) {
+  const allPages = browser.storage.local.get("allPagesSettings");
+  allPages.then((pgs) => {
+    const isModeOn = pgs.allPagesSettings[tab.url].isModeOn;
+    if (isModeOn) {
       document.getElementById("power-button").src = "../icons/power-on.svg";
     } else {
       document.getElementById("power-button").src = "../icons/power-off.svg";
@@ -62,24 +65,20 @@ function updateButtonColor(tab) {
 function listenForClicks(tab) {
   document.addEventListener("click", (e) => {
     function switchFocus() {
-      const isModeOn = browser.storage.local.get(tab.url);
+      const allPages = browser.storage.local.get("allPagesSettings");
 
-      isModeOn.then((m) => {
-        // safe access as f will be an empty object if not defined
-        // and f.isFocus will return undefined.
-        console.log("mode currently:");
-        console.log(m);
-
-        if (m[tab.url]) {
+      allPages.then((pgs) => {
+        const isModeOn = pgs.allPagesSettings[tab.url].isModeOn;
+        if (isModeOn) {
           console.log("Switching focus off");
           browser.storage.local.set({
-            [tab.url]: false,
+            allPagesSettings: { [tab.url]: { isModeOn: false } },
           });
           unfocusCSS();
         } else {
           console.log("Switching focus on");
           browser.storage.local.set({
-            [tab.url]: true,
+            allPagesSettings: { [tab.url]: { isModeOn: true } },
           });
           focusCSS();
         }
