@@ -4,7 +4,7 @@
   "version": "1.0",
 
   "description": "Declutter article pages on theverge.com, allowing for distraction-free and customisable reading.",
-  "homepage_url": "https://github.com/Mazeeni/wired-declutterer",
+  "homepage_url": "https://github.com/Mazeeni/verge-declutterer",
   "icons": {
     "48": "icons/wire-cutter.svg",
     "96": "icons/wire-cutter.svg"
@@ -20,12 +20,8 @@
   "permissions": ["activeTab", "tabs", "storage"],
 
   "browser_action": {
-    "default_icon": "icons/wire-cutter.svg",
+    "default_icon": "src/icons/wire-cutter.svg",
     "default_title": "Wire Declutterer",
-    "default_popup": "control-popup/control-popup.html"
-  },
-
-  "background": {
-    "scripts": ["background/background.js"]
+    "default_popup": "src/popup.html"
   }
 }

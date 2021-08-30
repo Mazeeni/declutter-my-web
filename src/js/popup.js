@@ -31,8 +31,9 @@ const elemClassesToHide = [
 ];
 
 // debug print all storage
-const allStorage = browser.storage.local.get();
-allStorage.then((s) => console.log(s));
+
+// const allStorage = browser.storage.local.get();
+// allStorage.then((s) => console.log(s));
 
 /**
  * Creates new profile for tab in storage.
@@ -55,9 +56,9 @@ function updateButtonColor(tab) {
   allPages.then((pgs) => {
     const isModeOn = pgs.allPagesSettings[tab.url].isModeOn;
     if (isModeOn) {
-      document.getElementById("power-button").src = "../icons/power-on.svg";
+      document.getElementById("power-button").src = "icons/power-on.svg";
     } else {
-      document.getElementById("power-button").src = "../icons/power-off.svg";
+      document.getElementById("power-button").src = "icons/power-off.svg";
     }
   });
 }
@@ -108,13 +109,14 @@ function listenForClicks(tab) {
   });
 }
 
-/**
- * Displays message to user that addon is unsupported on current
- * page.
- */
-function disableAddonOptions() {
-  document.querySelector("#popup-content").classList.add("hidden");
-  document.querySelector("#error-content").classList.remove("hidden");
+popupShowNoProfiles();
+
+function popupShowInvalidPage() {
+  document.querySelector("#popup-page-invalid").classList.remove("hidden");
+}
+
+function popupShowNoProfiles() {
+  document.querySelector("#popup-profile-invalid").classList.remove("hidden");
 }
 
 function reportExecuteScriptError(error) {
@@ -140,8 +142,8 @@ function onError(error) {
   console.log(`Error: ${error}`);
 }
 
-const currentTab = browser.tabs.query({
-  currentWindow: true,
-  active: true,
-});
-currentTab.then(onGot, onError);
+// const currentTab = browser.tabs.query({
+//   currentWindow: true,
+//   active: true,
+// });
+// currentTab.then(onGot, onError);

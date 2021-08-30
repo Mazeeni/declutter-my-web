@@ -2,23 +2,38 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="control-popup.css" />
+    <link rel="stylesheet" href="css/popup.css" />
   </head>
 
   <body>
-    <div id="popup-content">
+    <div id="popup-profile-valid" class="hidden">
       <button class="power-button">
         <img
-          src="../icons/power-off.svg"
+          src="icons/power-off.svg"
           id="power-button"
           alt="Declutter OFF"
           class="power-button"
         />
       </button>
     </div>
-    <div id="error-content" class="hidden">
-      <p>Addon only supported on theverge.com articles.</p>
+    <div id="popup-page-invalid" class="hidden">
+      <p>Reading mode doesn't work on these types of pages.</p>
     </div>
-    <script src="control-popup.js"></script>
+    <div id="popup-profile-invalid" class="hidden">
+      <p>No profiles created for this page.\n Create one now!</p>
+      <form>
+        <label for="fname">Profile Name:</label><br />
+        <input type="text" id="fname" name="fname" /><br />
+        <label for="lname">URL group:</label><br />
+        <input type="text" id="lname" name="lname" />
+        <label class="text-muted">
+          Customise what pages you want the profile to work on. For example,
+          inputting bbc.co.uk/news will mean any URL you visit containing that
+          input can be filtered using this profile.
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
+    <script src="js/popup.js"></script>
   </body>
 </html>
