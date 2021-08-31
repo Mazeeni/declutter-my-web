@@ -1,23 +1,46 @@
 function openTab(tabName) {
-  // Declare all variables
-  var i, tabContent, tabButton;
-
-  // Get all elements with class="tabContent" and hide them
-  tabContent = document.getElementsByClassName("tabContent");
+  var tabContent = document.getElementsByClassName("tabContent");
   for (i = 0; i < tabContent.length; i++) {
     tabContent[i].style.display = "none";
   }
-
-  // Get all elements with class="tabButton" and remove the class "active"
-  tabButton = document.getElementsByClassName("tabButton");
+  var tabButton = document.getElementsByClassName("tabButton");
   for (i = 0; i < tabButton.length; i++) {
     tabButton[i].className = tabButton[i].className.replace(" active", "");
   }
 
-  // Show the current tab, and add an "active" class to the button that opened the tab
   document.getElementById(tabName).style.display = "block";
-  // console.log(document.getElementsByName(tabName)[0].className);
   document.getElementsByName(tabName)[0].className += " active";
+}
+
+function validateAndSubmit() {
+  const profileName = document.getElementById("pname").value;
+  const nameRegex = new RegExp("[^a-zA-Z0-9_]");
+  if (profileName === "" || !!nameRegex.test(profileName)) {
+    document.getElementById("invalidCreate").innerText =
+      "Invalid profile name, must only contain alphanumerical characters and underscores (no spaces).";
+    return false;
+  }
+  const profileURL = document.getElementById("url").value;
+  const urlRegex = new RegExp(
+    "^(https?:\\/\\/)?" + // protocol
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+      "(\\#[-a-z\\d_]*)?$", // fragment locator
+    "i"
+  );
+  if (urlRegex === "" || !urlRegex.test(profileURL)) {
+    document.getElementById("invalidCreate").innerText =
+      "Invalid url, try again.";
+    return false;
+  }
+  document.getElementById("pname").value = "";
+  document.getElementById("url").value = "";
+  document.getElementById("invalidCreate").innerText = "";
+  document.getElementById("validCreate").innerText =
+    "Success, profile " + profileName + " created.";
+  return true;
 }
 
 const allTabButtons = document.getElementsByClassName("tabButton");
@@ -28,3 +51,8 @@ for (i = 0; i < allTabButtons.length; i++) {
   });
 }
 document.getElementById("defaultTab").click();
+
+const submitButton = document.getElementById("submitProfile");
+submitButton.addEventListener("click", function () {
+  validateAndSubmit();
+});

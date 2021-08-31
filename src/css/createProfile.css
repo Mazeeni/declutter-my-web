@@ -5,13 +5,13 @@
 }
 
 .tabNav button {
-  background-color: inherit;
+  background-color: white;
   float: left;
   border: none;
   outline: none;
   cursor: pointer;
   padding: 14px 16px;
-  transition: 2.3s;
+  transition: 0.3s;
 }
 
 .tabNav button:hover {
@@ -20,6 +20,14 @@
 
 .tabNav button.active {
   background-color: #ccc;
+}
+
+.invalidMessage {
+  color: red;
+}
+
+.validMessage {
+  color: rgb(17, 172, 17);
 }
 
 .tabContent {
