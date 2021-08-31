@@ -30,6 +30,27 @@ const elemClassesToHide = [
   "p-comment-notification",
 ];
 
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("the doc loaded");
+  var form = document.getElementById("newProfileForm");
+  // console.log(form.pname);
+  console.log(JSON.stringify(form, null, 4));
+  // form.addEventListener('submit',function(e){
+  //     e.preventDefault()
+  //     console.log("added to the form")
+  // })
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("the doc loaded");
+  var form = document.getElementById("newProfileForm");
+  console.log(form);
+  // form.addEventListener("submit", function (e) {
+  //   e.preventDefault();
+  //   console.log("added to the form");
+  // });
+});
+
 // debug print all storage
 
 // const allStorage = browser.storage.local.get();
@@ -111,6 +132,10 @@ function listenForClicks(tab) {
 
 popupShowNoProfiles();
 
+function submitNewProfile() {
+  console.log("HELLLLLLOLOOO SUBMIT");
+}
+
 function popupShowInvalidPage() {
   document.querySelector("#popup-page-invalid").classList.remove("hidden");
 }
@@ -141,6 +166,13 @@ function onGot(tabInfo) {
 function onError(error) {
   console.log(`Error: ${error}`);
 }
+
+const addProfileButton = document.getElementById("createProfileButton");
+addProfileButton.addEventListener("click", function () {
+  browser.tabs.create({
+    url: "createProfile.html",
+  });
+});
 
 // const currentTab = browser.tabs.query({
 //   currentWindow: true,
