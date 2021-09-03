@@ -152,7 +152,7 @@ function onError(error) {
 const addProfileButton = document.getElementById("createProfileButton");
 addProfileButton.addEventListener("click", function () {
   browser.tabs.create({
-    url: "createProfile.html",
+    url: "options.html",
   });
 });
 

@@ -36,3 +36,27 @@
   border: 1px solid #ccc;
   border-top: none;
 }
+
+.profilesTable {
+  padding: 0;
+  margin: auto;
+  border-collapse: collapse;
+  width: 80%;
+  text-align: center;
+  color: black;
+}
+.profilesTableHeaderRow {
+  color: darkorange;
+  font-weight: bold;
+  height: 50px;
+}
+.profilesTableBodyRow:nth-child(odd) {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+.profilesTableBodyRow:hover {
+  background-color: darkorange;
+}
+.profilesTable tr td {
+  height: 25px;
+}

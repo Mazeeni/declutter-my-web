@@ -44,13 +44,52 @@ function submit() {
   const profileURL = document.getElementById("url").value;
   const storageName = "profile" + profileName;
   browser.storage.local.set({
-    [storageName]: { url: profileURL, isModeOn: false },
+    [storageName]: { name: profileName, url: profileURL, isModeOn: false },
   });
   document.getElementById("pname").value = "";
   document.getElementById("url").value = "";
   document.getElementById("invalidCreate").innerText = "";
   document.getElementById("validCreate").innerText =
     "Success, profile " + profileName + " created.";
+}
+
+function createProfilesTable() {
+  const profilesTableBody = document.getElementById("profilesTableBody");
+  // remove any children currently loaded
+  const oldTableBody = document.getElementById("profilesTableBody");
+  const newTableBody = document.createElement("tbody");
+  oldTableBody.parentNode.replaceChild(newTableBody, oldTableBody);
+
+  const allProfiles = browser.storage.local.get();
+  allProfiles.then((ps) => {
+    for (const key in ps) {
+      const profile = ps[key];
+      appendProfile(profile.name, profile.url, profile.isModeOn);
+    }
+  });
+}
+
+function appendProfile(name, url, isModeOn) {
+  console.log(name + url + isModeOn);
+
+  const profilesTable = document.getElementById("profilesTable");
+
+  let newRow = document.createElement("tr");
+  newRow.className = "profilesTableBodyRow";
+
+  let profileName = document.createElement("td");
+  profileName.innerText = name;
+
+  let profileURL = document.createElement("td");
+  profileURL.innerText = url;
+
+  let profileMode = document.createElement("td");
+  profileMode.innerText = isModeOn;
+
+  newRow.append(profileName);
+  newRow.append(profileURL);
+  newRow.append(profileMode);
+  profilesTable.append(newRow);
 }
 
 const allTabButtons = document.getElementsByClassName("tabButton");
@@ -67,4 +106,9 @@ submitButton.addEventListener("click", function () {
   if (validate()) {
     submit();
   }
+});
+
+const manageProfilesButton = document.getElementsByName("manageProfiles")[0];
+manageProfilesButton.addEventListener("click", function () {
+  createProfilesTable();
 });

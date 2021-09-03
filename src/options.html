@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/createProfile.css" />
-    <title>Settings</title>
+    <link rel="stylesheet" href="css/options.css" />
+    <title>Options</title>
   </head>
   <body>
     <div class="tabNav">
@@ -36,7 +36,16 @@
 
     <div id="manageProfiles" class="tabContent">
       <h3>Manage Profiles</h3>
-      <p></p>
+      <table class="profilesTable" id="profilesTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>URL group</th>
+            <th>Currently Active</th>
+          </tr>
+        </thead>
+        <tbody id="profilesTableBody"></tbody>
+      </table>
     </div>
 
     <div id="about" class="tabContent">
@@ -44,5 +53,5 @@
       <p></p>
     </div>
   </body>
-  <script src="js/createProfile.js"></script>
+  <script src="js/options.js"></script>
 </html>
