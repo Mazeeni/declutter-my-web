@@ -1,6 +1,9 @@
+import { URL_REGEXP, PROF_NAME_REGEXP } from "./constants.js";
+
 function onLoad() {
   // tab buttons events
   const allTabButtons = document.getElementsByClassName("tabButton");
+  var i;
   for (i = 0; i < allTabButtons.length; i++) {
     const name = allTabButtons[i].name;
     allTabButtons[i].addEventListener("click", function () {
@@ -28,6 +31,7 @@ function openTab(tabName) {
     createProfilesTable();
   }
 
+  var i;
   var tabContent = document.getElementsByClassName("tabContent");
   for (i = 0; i < tabContent.length; i++) {
     tabContent[i].style.display = "none";
@@ -43,23 +47,14 @@ function openTab(tabName) {
 
 function validate() {
   const profileName = document.getElementById("pname").value;
-  const nameRegex = new RegExp("[^a-zA-Z0-9_]");
-  if (profileName === "" || !!nameRegex.test(profileName)) {
+
+  if (profileName === "" || !!PROF_NAME_REGEXP.test(profileName)) {
     document.getElementById("invalidCreate").innerText =
       "Invalid profile name, must only contain alphanumerical characters and underscores (no spaces).";
     return false;
   }
   const profileURL = document.getElementById("url").value;
-  const urlRegex = new RegExp(
-    "^(https?:\\/\\/)?" + // protocol
-      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
-      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
-      "(\\#[-a-z\\d_]*)?$", // fragment locator
-    "i"
-  );
-  if (urlRegex === "" || !urlRegex.test(profileURL)) {
+  if (!URL_REGEXP.test(profileURL)) {
     document.getElementById("invalidCreate").innerText =
       "Invalid url, try again.";
     return false;
