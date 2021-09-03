@@ -2,21 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="css/options.css" />
     <title>Options</title>
   </head>
   <body>
     <div class="tabNav">
-      <button class="tabButton" name="createProfile" id="defaultTab">
+      <button
+        type="button"
+        class="tabButton"
+        id="createProfileBtn"
+        name="createProfile"
+      >
         Create Profile
       </button>
-      <button class="tabButton" name="manageProfiles">Manage Profiles</button>
-      <button class="tabButton" name="about">About</button>
+      <button
+        type="button"
+        class="tabButton"
+        id="manageProfilesBtn"
+        name="manageProfiles"
+      >
+        Manage Profiles
+      </button>
+      <button type="button" class="tabButton" id="aboutBtn" name="about">
+        About
+      </button>
     </div>
 
-    <div id="createProfile" class="tabContent">
+    <div id="createProfileTab" class="tabContent">
       <h3>Create Profile</h3>
       <label for="pname">Profile Name:</label><br />
       <input type="text" id="pname" name="pname" /><br required />
@@ -34,12 +47,12 @@
       <p class="validMessage" id="validCreate"></p>
     </div>
 
-    <div id="manageProfiles" class="tabContent">
+    <div id="manageProfilesTab" class="tabContent">
       <h3>Manage Profiles</h3>
       <table class="profilesTable" id="profilesTable">
         <thead>
           <tr>
-            <th>Name</th>
+            <th>Name (Descending)</th>
             <th>URL group</th>
             <th>Currently Active</th>
           </tr>
@@ -48,7 +61,7 @@
       </table>
     </div>
 
-    <div id="about" class="tabContent">
+    <div id="aboutTab" class="tabContent">
       <h3>About</h3>
       <p></p>
     </div>

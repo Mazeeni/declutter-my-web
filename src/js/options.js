@@ -1,4 +1,33 @@
+function onLoad() {
+  // tab buttons events
+  const allTabButtons = document.getElementsByClassName("tabButton");
+  for (i = 0; i < allTabButtons.length; i++) {
+    const name = allTabButtons[i].name;
+    allTabButtons[i].addEventListener("click", function () {
+      openTab(name);
+    });
+  }
+
+  // submit button event
+  const submitButton = document.getElementById("submitProfile");
+  submitButton.addEventListener("click", function () {
+    if (validate()) {
+      submit();
+    }
+  });
+
+  // open default page
+  document.getElementById("manageProfilesBtn").click();
+}
+
+/**
+ * Tab switching functionality.
+ */
 function openTab(tabName) {
+  if (tabName === "manageProfiles") {
+    createProfilesTable();
+  }
+
   var tabContent = document.getElementsByClassName("tabContent");
   for (i = 0; i < tabContent.length; i++) {
     tabContent[i].style.display = "none";
@@ -8,8 +37,8 @@ function openTab(tabName) {
     tabButton[i].className = tabButton[i].className.replace(" active", "");
   }
 
-  document.getElementById(tabName).style.display = "block";
-  document.getElementsByName(tabName)[0].className += " active";
+  document.getElementById([tabName + "Tab"]).style.display = "block";
+  document.getElementById([tabName + "Btn"]).className += " active";
 }
 
 function validate() {
@@ -54,11 +83,11 @@ function submit() {
 }
 
 function createProfilesTable() {
-  const profilesTableBody = document.getElementById("profilesTableBody");
-  // remove any children currently loaded
-  const oldTableBody = document.getElementById("profilesTableBody");
-  const newTableBody = document.createElement("tbody");
-  oldTableBody.parentNode.replaceChild(newTableBody, oldTableBody);
+  var myTable = document.getElementById("profilesTable");
+  var rowCount = myTable.rows.length;
+  for (var x = rowCount - 1; x > 0; x--) {
+    myTable.deleteRow(x);
+  }
 
   const allProfiles = browser.storage.local.get();
   allProfiles.then((ps) => {
@@ -70,8 +99,6 @@ function createProfilesTable() {
 }
 
 function appendProfile(name, url, isModeOn) {
-  console.log(name + url + isModeOn);
-
   const profilesTable = document.getElementById("profilesTable");
 
   let newRow = document.createElement("tr");
@@ -92,23 +119,4 @@ function appendProfile(name, url, isModeOn) {
   profilesTable.append(newRow);
 }
 
-const allTabButtons = document.getElementsByClassName("tabButton");
-for (i = 0; i < allTabButtons.length; i++) {
-  const name = allTabButtons[i].name;
-  allTabButtons[i].addEventListener("click", function () {
-    openTab(name);
-  });
-}
-document.getElementById("defaultTab").click();
-
-const submitButton = document.getElementById("submitProfile");
-submitButton.addEventListener("click", function () {
-  if (validate()) {
-    submit();
-  }
-});
-
-const manageProfilesButton = document.getElementsByName("manageProfiles")[0];
-manageProfilesButton.addEventListener("click", function () {
-  createProfilesTable();
-});
+document.addEventListener("DOMContentLoaded", onLoad);
