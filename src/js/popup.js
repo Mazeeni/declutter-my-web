@@ -30,31 +30,13 @@ const elemClassesToHide = [
   "p-comment-notification",
 ];
 
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("the doc loaded");
-  var form = document.getElementById("newProfileForm");
-  // console.log(form.pname);
-  console.log(JSON.stringify(form, null, 4));
-  // form.addEventListener('submit',function(e){
-  //     e.preventDefault()
-  //     console.log("added to the form")
-  // })
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("the doc loaded");
-  var form = document.getElementById("newProfileForm");
-  console.log(form);
-  // form.addEventListener("submit", function (e) {
-  //   e.preventDefault();
-  //   console.log("added to the form");
-  // });
-});
-
 // debug print all storage
+console.log("Current storage:");
+const allStorage = browser.storage.local.get();
+allStorage.then((s) => console.log(s));
 
-// const allStorage = browser.storage.local.get();
-// allStorage.then((s) => console.log(s));
+// clear storage
+// browser.storage.local.clear();
 
 /**
  * Creates new profile for tab in storage.

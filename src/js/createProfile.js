@@ -12,7 +12,7 @@ function openTab(tabName) {
   document.getElementsByName(tabName)[0].className += " active";
 }
 
-function validateAndSubmit() {
+function validate() {
   const profileName = document.getElementById("pname").value;
   const nameRegex = new RegExp("[^a-zA-Z0-9_]");
   if (profileName === "" || !!nameRegex.test(profileName)) {
@@ -35,12 +35,22 @@ function validateAndSubmit() {
       "Invalid url, try again.";
     return false;
   }
+
+  return true;
+}
+
+function submit() {
+  const profileName = document.getElementById("pname").value;
+  const profileURL = document.getElementById("url").value;
+  const storageName = "profile" + profileName;
+  browser.storage.local.set({
+    [storageName]: { url: profileURL, isModeOn: false },
+  });
   document.getElementById("pname").value = "";
   document.getElementById("url").value = "";
   document.getElementById("invalidCreate").innerText = "";
   document.getElementById("validCreate").innerText =
     "Success, profile " + profileName + " created.";
-  return true;
 }
 
 const allTabButtons = document.getElementsByClassName("tabButton");
@@ -54,5 +64,7 @@ document.getElementById("defaultTab").click();
 
 const submitButton = document.getElementById("submitProfile");
 submitButton.addEventListener("click", function () {
-  validateAndSubmit();
+  if (validate()) {
+    submit();
+  }
 });
