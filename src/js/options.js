@@ -108,10 +108,35 @@ function appendProfile(name, url, isModeOn) {
   let profileMode = document.createElement("td");
   profileMode.innerText = isModeOn;
 
+  let profileRemove = document.createElement("td");
+  // let deleteBtn = document.createElement("button");
+
+  let deleteImg = document.createElement("img");
+  deleteImg.src = "icons/delete.svg";
+  deleteImg.alt = "Delete";
+  deleteImg.classList += "deleteProfile";
+  // deleteBtn.innerHTML = "<img src='../icons/delete.svg' alt='Delete'/>";
+  // console.log(deleteBtn.outerHTML);
+  deleteImg.addEventListener("click", function () {
+    deleteProfile(name);
+  });
+
+  profileRemove.append(deleteImg);
+  // deleteBtn.append(deleteImg);
+  // removeProfile.innerHTML = newRow.append(profileName);
+
   newRow.append(profileName);
   newRow.append(profileURL);
   newRow.append(profileMode);
+  newRow.append(profileRemove);
   profilesTable.append(newRow);
+}
+
+function deleteProfile(name) {
+  const deleteProfile = browser.storage.local.remove(["profile" + name]);
+  deleteProfile.then(() => {
+    document.getElementById("manageProfilesBtn").click();
+  });
 }
 
 document.addEventListener("DOMContentLoaded", onLoad);

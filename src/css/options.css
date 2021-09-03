@@ -55,8 +55,12 @@
 }
 
 .profilesTableBodyRow:hover {
-  background-color: darkorange;
+  background-color: bisque;
 }
 .profilesTable tr td {
   height: 25px;
+}
+
+.deleteProfile:hover {
+  cursor: pointer;
 }
