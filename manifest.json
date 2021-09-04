@@ -25,6 +25,10 @@
     "default_popup": "src/popup.html"
   },
 
+  "page_action": {
+    "default_popup": "src/filterPopup.html"
+  },
+
   "background": {
     "scripts": ["src/js/background.js"]
   }
