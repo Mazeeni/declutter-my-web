@@ -2,7 +2,8 @@
   // wait for response
   const filterParams = await browser.runtime.sendMessage("getFilterParams");
   let { tabId, frameId, targetElementId } = filterParams;
-  document.getElementById("testt").innerText = targetElementId;
+  const elemOuterHTML = document.getElementById("elemOuterHTML");
+  const elemClassList = document.getElementById("elemClassList");
 
   // inject content script into current tab
   await browser.tabs.executeScript(tabId, {
@@ -18,7 +19,9 @@
   });
 
   port.onMessage.addListener((msg) => {
-    if (msg.action === "targetElement") {
+    if (msg.action === "returnTargetElement") {
+      elemOuterHTML.innerText = msg.elemOuterHTML;
+      elemClassList.innerText = msg.elemClassList;
     }
   });
 
