@@ -41,5 +41,11 @@
         );
       }
     });
+
+    port.onMessage.addListener((msg) => {
+      if (msg.action === "unhighlightElement") {
+        highlightedArea.remove();
+      }
+    });
   });
 })();
