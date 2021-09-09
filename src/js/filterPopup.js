@@ -19,7 +19,12 @@
   port.onMessage.addListener((msg) => {
     if (msg.action === "returnTargetElement") {
       elemOuterHTML.innerText = msg.elemOuterHTML;
-      elemClassList.innerText = msg.elemClassList;
+
+      msg.elemClassList.split(" ").forEach((c) => {
+        const classBtn = document.createElement("button");
+        classBtn.innerText = c;
+        elemClassList.appendChild(classBtn);
+      });
       elemOuterHTML.addEventListener("mouseover", function () {
         highlightElement();
       });
