@@ -29,4 +29,9 @@
     action: "getTargetElement",
     elemId: targetElementId,
   });
+
+  port.postMessage({
+    action: "highlightElement",
+    elemId: targetElementId,
+  });
 })();
