@@ -3,6 +3,9 @@
   let { tabId, frameId, targetElementId } = filterParams;
   const elemOuterHTML = document.getElementById("elemOuterHTML");
   const elemClassList = document.getElementById("elemClassList");
+  var currParent = -1;
+  var parentElems = [];
+  var parentElemsClasses = [];
 
   await browser.tabs.executeScript(tabId, {
     frameId,
@@ -16,35 +19,40 @@
 
   // listen for selected element html and classes
   port.onMessage.addListener((msg) => {
-    if (msg.action === "returnTargetElement") {
-      elemOuterHTML.innerText = msg.elemOuterHTML;
+    if (msg.action === "returnTargetElements") {
+      currParent = 0;
+      parentElems = msg.elemsSlicedHTML;
+      console.log(parentElems.join("\n"));
+      // parentElemsClasses = msg.elemsClassLists;
+      elemOuterHTML.innerText = parentElems[0];
+      // elemOuterHTML.innerText = parentElems.join("\n");
 
-      msg.elemClassList.split(" ").forEach((c) => {
-        const classBtn = document.createElement("button");
-        classBtn.innerText = c;
+      // msg.elemClassList.split(" ").forEach((c) => {
+      //   const classBtn = document.createElement("button");
+      //   classBtn.innerText = c;
 
-        classBtn.addEventListener("mouseover", () =>
-          highlightElementsFromClass(c)
-        );
+      //   classBtn.addEventListener("mouseover", () =>
+      //     highlightElementsFromClass(c)
+      //   );
 
-        classBtn.addEventListener("mouseout", () =>
-          unhighlightElementsFromClass(c)
-        );
+      //   classBtn.addEventListener("mouseout", () =>
+      //     unhighlightElementsFromClass(c)
+      //   );
 
-        elemClassList.appendChild(classBtn);
-      });
+      //   elemClassList.appendChild(classBtn);
+      // });
 
-      elemOuterHTML.addEventListener("mouseover", function () {
-        highlightElement(targetElementId);
-      });
-      elemOuterHTML.addEventListener("mouseout", function () {
-        unhighlightElement(targetElementId);
-      });
+      // elemOuterHTML.addEventListener("mouseover", function () {
+      //   highlightElement(targetElementId);
+      // });
+      // elemOuterHTML.addEventListener("mouseout", function () {
+      //   unhighlightElement(targetElementId);
+      // });
     }
   });
 
   port.postMessage({
-    action: "getTargetElement",
+    action: "getTargetElements",
     elemId: targetElementId,
   });
 
@@ -78,4 +86,27 @@
       elemId: id,
     });
   }
+
+  function goUpParent() {
+    if (currParent + 1 >= parentElems.length) {
+      return;
+    }
+    currParent++;
+    elemOuterHTML.innerText = parentElems[currParent];
+  }
+
+  function goDownParent() {
+    if (currParent - 1 < 0) {
+      return;
+    }
+    currParent--;
+    elemOuterHTML.innerText = parentElems[currParent];
+  }
+
+  document
+    .getElementById("upParentBtn")
+    .addEventListener("click", () => goUpParent());
+  document
+    .getElementById("downParentBtn")
+    .addEventListener("click", () => goDownParent());
 })();

@@ -6,14 +6,26 @@
     if (port.name !== "portFilterPopup") return;
 
     port.onMessage.addListener((msg) => {
-      if (msg.action === "getTargetElement") {
+      if (msg.action === "getTargetElements") {
         let elem = browser.menus.getTargetElement(msg.elemId);
-        const elemOuterHTML = elem.outerHTML;
-        const elemClassList = elem.classList.toString();
+        targetElements = [];
+        while (elem) {
+          targetElements.push(elem);
+          elem = elem.parentElement;
+        }
+
+        let elemsSlicedHTML = targetElements.map((e) => {
+          return e.cloneNode().outerHTML.slice(0, 150);
+        });
+
+        // let elemsClassLists = targetElements.map((e) => {
+        //   return e.cloneNode().classList;
+        // });
+
         port.postMessage({
-          action: "returnTargetElement",
-          elemOuterHTML,
-          elemClassList,
+          action: "returnTargetElements",
+          elemsSlicedHTML,
+          // elemsClassLists,
         });
       }
     });
