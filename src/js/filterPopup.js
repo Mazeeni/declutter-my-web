@@ -22,32 +22,32 @@
     if (msg.action === "returnTargetElements") {
       currParent = 0;
       parentElems = msg.elemsSlicedHTML;
-      console.log(parentElems.join("\n"));
-      // parentElemsClasses = msg.elemsClassLists;
+      parentElemsClasses = msg.elemsClassLists;
+      console.log(parentElemsClasses[0]);
       elemOuterHTML.innerText = parentElems[0];
-      // elemOuterHTML.innerText = parentElems.join("\n");
+      // elemClassList.innerText = parentElemsClasses[0];
 
-      // msg.elemClassList.split(" ").forEach((c) => {
-      //   const classBtn = document.createElement("button");
-      //   classBtn.innerText = c;
+      parentElemsClasses[0].forEach((c) => {
+        const classBtn = document.createElement("button");
+        classBtn.innerText = c;
 
-      //   classBtn.addEventListener("mouseover", () =>
-      //     highlightElementsFromClass(c)
-      //   );
+        classBtn.addEventListener("mouseover", () =>
+          highlightElementsFromClass(c)
+        );
 
-      //   classBtn.addEventListener("mouseout", () =>
-      //     unhighlightElementsFromClass(c)
-      //   );
+        classBtn.addEventListener("mouseout", () =>
+          unhighlightElementsFromClass(c)
+        );
 
-      //   elemClassList.appendChild(classBtn);
-      // });
+        elemClassList.appendChild(classBtn);
+      });
 
-      // elemOuterHTML.addEventListener("mouseover", function () {
-      //   highlightElement(targetElementId);
-      // });
-      // elemOuterHTML.addEventListener("mouseout", function () {
-      //   unhighlightElement(targetElementId);
-      // });
+      elemOuterHTML.addEventListener("mouseover", function () {
+        highlightElement(targetElementId);
+      });
+      elemOuterHTML.addEventListener("mouseout", function () {
+        unhighlightElement(targetElementId);
+      });
     }
   });
 
@@ -93,6 +93,21 @@
     }
     currParent++;
     elemOuterHTML.innerText = parentElems[currParent];
+    elemClassList.innerHTML = "";
+    parentElemsClasses[currParent].forEach((c) => {
+      const classBtn = document.createElement("button");
+      classBtn.innerText = c;
+
+      classBtn.addEventListener("mouseover", () =>
+        highlightElementsFromClass(c)
+      );
+
+      classBtn.addEventListener("mouseout", () =>
+        unhighlightElementsFromClass(c)
+      );
+
+      elemClassList.appendChild(classBtn);
+    });
   }
 
   function goDownParent() {
@@ -101,6 +116,21 @@
     }
     currParent--;
     elemOuterHTML.innerText = parentElems[currParent];
+    elemClassList.innerHTML = "";
+    parentElemsClasses[currParent].forEach((c) => {
+      const classBtn = document.createElement("button");
+      classBtn.innerText = c;
+
+      classBtn.addEventListener("mouseover", () =>
+        highlightElementsFromClass(c)
+      );
+
+      classBtn.addEventListener("mouseout", () =>
+        unhighlightElementsFromClass(c)
+      );
+
+      elemClassList.appendChild(classBtn);
+    });
   }
 
   document

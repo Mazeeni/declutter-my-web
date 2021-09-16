@@ -15,17 +15,17 @@
         }
 
         let elemsSlicedHTML = targetElements.map((e) => {
-          return e.cloneNode().outerHTML.slice(0, 150);
+          return e.outerHTML.slice(0, 150);
         });
 
-        // let elemsClassLists = targetElements.map((e) => {
-        //   return e.cloneNode().classList;
-        // });
+        let elemsClassLists = targetElements.map((e) => {
+          return [...e.classList];
+        });
 
         port.postMessage({
           action: "returnTargetElements",
           elemsSlicedHTML,
-          // elemsClassLists,
+          elemsClassLists,
         });
       }
     });
