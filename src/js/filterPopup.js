@@ -23,9 +23,7 @@
       currParent = 0;
       parentElems = msg.elemsSlicedHTML;
       parentElemsClasses = msg.elemsClassLists;
-      console.log(parentElemsClasses[0]);
       elemOuterHTML.innerText = parentElems[0];
-      // elemClassList.innerText = parentElemsClasses[0];
 
       parentElemsClasses[0].forEach((c) => {
         const classBtn = document.createElement("button");
@@ -43,10 +41,10 @@
       });
 
       elemOuterHTML.addEventListener("mouseover", function () {
-        highlightElement(targetElementId);
+        highlightElement(currParent);
       });
       elemOuterHTML.addEventListener("mouseout", function () {
-        unhighlightElement(targetElementId);
+        unhighlightElement(currParent);
       });
     }
   });
@@ -56,16 +54,14 @@
     elemId: targetElementId,
   });
 
-  function highlightElement(id) {
-    console.log("highlightingElement");
+  function highlightElement(index) {
     port.postMessage({
       action: "highlightElement",
-      elemId: id,
+      index,
     });
   }
 
   function highlightElementsFromClass(className) {
-    console.log("BANG");
     port.postMessage({
       action: "highlightElementsFromClass",
       cName: className,
@@ -73,17 +69,16 @@
   }
 
   function unhighlightElementsFromClass(className) {
-    console.log("unhighlighting");
     port.postMessage({
       action: "unhighlightElementsFromClass",
       cName: className,
     });
   }
 
-  function unhighlightElement(id) {
+  function unhighlightElement(index) {
     port.postMessage({
       action: "unhighlightElement",
-      elemId: id,
+      index,
     });
   }
 

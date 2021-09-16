@@ -2,6 +2,8 @@
   if (window.hasRunContentScriptOnce === true) return;
   window.hasRunContentScriptOnce = true;
 
+  var targetElements = [];
+
   browser.runtime.onConnect.addListener((port) => {
     if (port.name !== "portFilterPopup") return;
 
@@ -33,7 +35,7 @@
     var highlightedAreas = [];
     port.onMessage.addListener((msg) => {
       if (msg.action === "highlightElement") {
-        highlightElement(browser.menus.getTargetElement(msg.elemId));
+        highlightElement(targetElements[msg.index]);
       } else if (msg.action === "highlightElementsFromClass") {
         var elems = document.getElementsByClassName(msg.cName);
         for (var i = 0; i < elems.length; i++) {
