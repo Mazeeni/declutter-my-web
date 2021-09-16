@@ -5,7 +5,6 @@
   const elemClassList = document.getElementById("elemClassList");
 
   await browser.tabs.executeScript(tabId, {
-    runAt: "document_start",
     frameId,
     file: "js/contentScript.js",
   });
@@ -23,13 +22,23 @@
       msg.elemClassList.split(" ").forEach((c) => {
         const classBtn = document.createElement("button");
         classBtn.innerText = c;
+
+        classBtn.addEventListener("mouseover", () =>
+          highlightElementsFromClass(c)
+        );
+
+        classBtn.addEventListener("mouseout", () =>
+          unhighlightElementsFromClass(c)
+        );
+
         elemClassList.appendChild(classBtn);
       });
+
       elemOuterHTML.addEventListener("mouseover", function () {
-        highlightElement();
+        highlightElement(targetElementId);
       });
       elemOuterHTML.addEventListener("mouseout", function () {
-        unhighlightElement();
+        unhighlightElement(targetElementId);
       });
     }
   });
@@ -39,17 +48,34 @@
     elemId: targetElementId,
   });
 
-  function highlightElement() {
+  function highlightElement(id) {
+    console.log("highlightingElement");
     port.postMessage({
       action: "highlightElement",
-      elemId: targetElementId,
+      elemId: id,
     });
   }
 
-  function unhighlightElement() {
+  function highlightElementsFromClass(className) {
+    console.log("BANG");
+    port.postMessage({
+      action: "highlightElementsFromClass",
+      cName: className,
+    });
+  }
+
+  function unhighlightElementsFromClass(className) {
+    console.log("unhighlighting");
+    port.postMessage({
+      action: "unhighlightElementsFromClass",
+      cName: className,
+    });
+  }
+
+  function unhighlightElement(id) {
     port.postMessage({
       action: "unhighlightElement",
-      elemId: targetElementId,
+      elemId: id,
     });
   }
 })();
