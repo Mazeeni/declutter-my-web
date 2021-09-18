@@ -65,16 +65,42 @@ function validate() {
 
 function submit() {
   const profileName = document.getElementById("pname").value;
-  const profileURL = document.getElementById("url").value;
-  const storageName = "profile" + profileName;
-  browser.storage.local.set({
-    [storageName]: { name: profileName, url: profileURL, isModeOn: false },
+  var profileURL = document.getElementById("url").value;
+  if (profileURL.search(/^http[s]?\:\/\//) == -1) {
+    profileURL = "http://" + profileURL;
+  }
+  const profileURLDomain = new URL(profileURL).hostname;
+  console.log(profileURLDomain);
+
+  const storageName = "profilesFor" + profileURLDomain;
+  const storage = browser.storage.local.get(storageName);
+  storage.then((s) => {
+    console.log(s);
+    if (Object.entries(s).length === 0) {
+      console.log("NADA");
+      browser.storage.local.set({
+        [storageName]: {
+          [profileName]: {
+            name: profileName,
+            url: profileURL,
+            isModeOn: false,
+          },
+        },
+      });
+    }
   });
-  document.getElementById("pname").value = "";
-  document.getElementById("url").value = "";
-  document.getElementById("invalidCreate").innerText = "";
-  document.getElementById("validCreate").innerText =
-    "Success, profile " + profileName + " created.";
+
+  return;
+
+  // const storageName = "profile" + profileName;
+  // browser.storage.local.set({
+  //   [storageName]: { name: profileName, url: profileURL, isModeOn: false },
+  // });
+  // document.getElementById("pname").value = "";
+  // document.getElementById("url").value = "";
+  // document.getElementById("invalidCreate").innerText = "";
+  // document.getElementById("validCreate").innerText =
+  //   "Success, profile " + profileName + " created.";
 }
 
 function createProfilesTable() {
