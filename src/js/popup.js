@@ -14,25 +14,9 @@ function hideElemByClassCSS(cclass) {
   );
 }
 
-const elemClassesToHide = [
-  "c-global-header",
-  "l-col__sidebar",
-  "c-social-buttons",
-  "m-ad",
-  "connatix-article-desktop",
-  "connatix-feature-desktop",
-  "c-recirc-module",
-  "ob-widget-section",
-  "c-tab-bar",
-  "c-footer",
-  "c-nextclick",
-  "tab-bar-fixed",
-  "connatix-feature-desktop-packaged-content",
-  "c-comments",
-  "p-comment-notification",
-];
+var matchingProfiles = [];
 
-function onLoad() {
+async function onLoad() {
   const addProfileButton = document.getElementById("createProfileButton");
   addProfileButton.addEventListener("click", function () {
     browser.tabs.create({
@@ -45,13 +29,20 @@ function onLoad() {
       popupShowInvalidPage();
     } else {
       var url = tabs[0].url;
-      url = url.replace(/^https?\:\/\//i, "");
-      url = url.replace("www.", "");
-      console.log("Current url: " + url);
-      const prof = findActiveProfile(url);
-      prof.then((p) => {
-        if (!!p) {
-          popupShowProfile(p.name);
+      const profs = findMatchingProfiles(url);
+      profs.then((ps) => {
+        if (ps.length > 0) {
+          for (var i = 0; i < ps.length; i++) {
+            matchingProfiles.push(ps[i]);
+            if (ps[i].isModeOn === true) {
+              popupShowProfile(ps[i].name);
+              matchingProfiles.push([...ps.slice(i + 1)]);
+              break;
+            } else if (i === ps.length - 1) {
+              popupShowProfile(ps[0].name);
+            }
+          }
+          updateProfilesList();
         } else {
           popupShowNoProfiles();
         }
@@ -60,22 +51,28 @@ function onLoad() {
   });
 
   // updateButtonColor(curTab);
+
   // listenForClicks(curTab);
 }
 
-async function findActiveProfile(url) {
-  const allProfiles = await browser.storage.local.get();
+async function findMatchingProfiles(url) {
+  const tabHostname = new URL(url).hostname.replace(/^(www\.)/, "");
+  const profileGroupName = "profilesFor" + tabHostname;
 
-  for (const key in allProfiles) {
+  const allProfiles = await browser.storage.local.get(profileGroupName);
+  const profilesMatchingHostname = allProfiles[Object.keys(allProfiles)[0]];
+  const res = [];
+
+  for (const key in profilesMatchingHostname) {
     console.log("Key");
-    console.log(allProfiles[key]);
-    if (url.includes(allProfiles[key].url)) {
-      console.log("hmmm");
-      console.log(allProfiles[key]);
-      return allProfiles[key];
+    console.log(profilesMatchingHostname[key]);
+    console.log(url);
+    console.log(profilesMatchingHostname[key].url);
+    if (url.includes(profilesMatchingHostname[key].url)) {
+      res.push(profilesMatchingHostname[key]);
     }
   }
-  return null;
+  return res;
 }
 
 // debug print all storage
@@ -97,6 +94,19 @@ function updateButtonColor(tab) {
       document.getElementById("power-button").src = "icons/power-off.svg";
     }
   });
+}
+
+function updateProfilesList() {
+  const list = document.getElementById("profList");
+  list.innerHTML = "";
+  console.log("MATCHING");
+  console.log(matchingProfiles);
+  console.log("MATCHING");
+  for (var i = 0; i < matchingProfiles.length; i++) {
+    const profBtn = document.createElement("button");
+    profBtn.innerText = matchingProfiles[i].name;
+    list.appendChild(profBtn);
+  }
 }
 
 function listenForClicks(tab) {

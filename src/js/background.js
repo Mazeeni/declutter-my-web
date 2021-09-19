@@ -32,3 +32,35 @@ browser.runtime.onMessage.addListener(async (msg) => {
     return filterParams;
   }
 });
+
+// check if page has an active profile on it
+async function newPageOpened(tabId) {
+  const tab = await browser.tabs.get(tabId);
+  const tabHostname = new URL(tab.url).hostname.replace(/^(www\.)/, "");
+  const storageName = "profilesFor" + tabHostname;
+  const allProfileGroups = await browser.storage.local.get(storageName);
+  console.log(allProfileGroups);
+
+  if (Object.entries(allProfileGroups).length !== 0) {
+    const currProfileGroup = allProfileGroups[Object.keys(allProfileGroups)[0]];
+    console.log(currProfileGroup);
+    for (const key in currProfileGroup) {
+      if (
+        tab.url.includes(currProfileGroup[key].url) &&
+        currProfileGroup[key].isModeOn
+      ) {
+        // ready to apply profile to page.
+      }
+      // go thru profiles and look for active one
+      // otherwise default to first profile
+    }
+  }
+
+  // gettingTab.then((t) => {
+  //   const urlDomain = new URL(t.url);
+  //   browser.tabs.get;
+  // });
+  console.log(tab.url);
+}
+
+browser.tabs.onUpdated.addListener(newPageOpened, { properties: ["url"] });

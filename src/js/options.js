@@ -65,11 +65,12 @@ function validate() {
 
 function submit() {
   const profileName = document.getElementById("pname").value;
-  var profileURL = document.getElementById("url").value;
+  const profileURL = document.getElementById("url").value;
+  var profileStrippedProtocol = profileURL;
   if (profileURL.search(/^http[s]?\:\/\//) == -1) {
-    profileURL = "http://" + profileURL;
+    profileStrippedProtocol = "http://" + profileURL;
   }
-  const profileURLDomain = new URL(profileURL).hostname;
+  const profileURLDomain = new URL(profileStrippedProtocol).hostname;
   console.log(profileURLDomain);
 
   const storageName = "profilesFor" + profileURLDomain;
@@ -78,17 +79,41 @@ function submit() {
     console.log(s);
     if (Object.entries(s).length === 0) {
       console.log("NADA");
-      browser.storage.local.set({
-        [storageName]: {
-          [profileName]: {
-            name: profileName,
-            url: profileURL,
-            isModeOn: false,
-          },
+      const newProfilesGroup = {
+        [profileName]: {
+          name: profileName,
+          url: profileURL,
+          isModeOn: false,
         },
+      };
+      browser.storage.local.set({
+        [storageName]: newProfilesGroup,
       });
+    } else {
+      const justProfileGroup = s[Object.keys(s)[0]];
+      console.log("FOUND");
+      console.log(s);
+      justProfileGroup[profileName] = {
+        name: profileName,
+        url: profileURL,
+        isModeOn: false,
+      };
+      console.log(justProfileGroup);
+
+      // s[profileName] = {
+      //   name: profileName,
+      //   url: profileURL,
+      //   isModeOn: false,
+      // };
+      browser.storage.local.set({ [storageName]: justProfileGroup });
     }
   });
+
+  document.getElementById("pname").value = "";
+  document.getElementById("url").value = "";
+  document.getElementById("invalidCreate").innerText = "";
+  document.getElementById("validCreate").innerText =
+    "Success, profile " + profileName + " created.";
 
   return;
 
@@ -96,11 +121,6 @@ function submit() {
   // browser.storage.local.set({
   //   [storageName]: { name: profileName, url: profileURL, isModeOn: false },
   // });
-  // document.getElementById("pname").value = "";
-  // document.getElementById("url").value = "";
-  // document.getElementById("invalidCreate").innerText = "";
-  // document.getElementById("validCreate").innerText =
-  //   "Success, profile " + profileName + " created.";
 }
 
 function createProfilesTable() {
