@@ -8,7 +8,7 @@
     if (port.name !== "portFilterPopup") return;
 
     port.onMessage.addListener((msg) => {
-      if (msg.action === "getTargetElements") {
+      if (msg.action === "getTargetElems") {
         let elem = browser.menus.getTargetElement(msg.elemId);
         targetElements = [];
         while (elem) {
@@ -34,27 +34,19 @@
 
     var highlightedAreas = [];
     port.onMessage.addListener((msg) => {
-      if (msg.action === "highlightElement") {
-        highlightElement(targetElements[msg.index]);
-      } else if (msg.action === "highlightElementsFromClass") {
+      if (msg.action === "highlightElem") {
+        highlightElem(targetElements[msg.index]);
+      } else if (msg.action === "highlightElemsFromClass") {
         var elems = document.getElementsByClassName(msg.cName);
         for (var i = 0; i < elems.length; i++) {
-          highlightElement(elems[i]);
+          highlightElem(elems[i]);
         }
-      } else if (msg.action === "unhighlightElement") {
-        for (var i = 0; i < highlightedAreas.length; i++) {
-          highlightedAreas[i].remove();
-        }
-        highlightedAreas = [];
-      } else if (msg.action === "unhighlightElementsFromClass") {
-        for (var i = 0; i < highlightedAreas.length; i++) {
-          highlightedAreas[i].remove();
-        }
-        highlightedAreas = [];
+      } else if (msg.action === "unhighlightAll") {
+        unhighlightAll();
       }
     });
 
-    function highlightElement(domElem) {
+    function highlightElem(domElem) {
       let boundingRect = domElem.getBoundingClientRect();
       var highlightedArea = document.createElement("div");
       highlightedArea.style.top = boundingRect.top + "px";
@@ -71,6 +63,13 @@
       (document.body || document.documentElement).appendChild(highlightedArea);
 
       highlightedAreas.push(highlightedArea);
+    }
+
+    function unhighlightAll() {
+      for (var i = 0; i < highlightedAreas.length; i++) {
+        highlightedAreas[i].remove();
+      }
+      highlightedAreas = [];
     }
   });
 })();

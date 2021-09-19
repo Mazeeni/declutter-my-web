@@ -1,5 +1,10 @@
 import { URL_REGEXP, PROF_NAME_REGEXP } from "./constants.js";
 
+/*
+ * Sets up options page once HTML loads.
+ * Creates event listeners for tabs and buttons.
+ * Opens default page.
+ */
 function onLoad() {
   // tab buttons events
   const allTabButtons = document.getElementsByClassName("tabButton");
@@ -23,8 +28,8 @@ function onLoad() {
   document.getElementById("manageProfilesBtn").click();
 }
 
-/**
- * Tab switching functionality.
+/*
+ * Tab switching functionality for Options page.
  */
 function openTab(tabName) {
   if (tabName === "manageProfiles") {
@@ -45,6 +50,10 @@ function openTab(tabName) {
   document.getElementById([tabName + "Btn"]).className += " active";
 }
 
+/*
+ * Validate the "Create a Profile" form, writing error messages
+ * to page if invalid.
+ */
 function validate() {
   const profileName = document.getElementById("pname").value;
 
@@ -63,6 +72,10 @@ function validate() {
   return true;
 }
 
+/*
+ * Submit new profile.
+ * Add to storage.
+ */
 function submit() {
   const profileName = document.getElementById("pname").value;
   const profileURL = document.getElementById("url").value;
@@ -76,14 +89,13 @@ function submit() {
   const storageName = "profilesFor" + profileURLDomain;
   const storage = browser.storage.local.get(storageName);
   storage.then((s) => {
-    console.log(s);
     if (Object.entries(s).length === 0) {
-      console.log("NADA");
       const newProfilesGroup = {
         [profileName]: {
           name: profileName,
           url: profileURL,
           isModeOn: false,
+          blockedClasses: [],
         },
       };
       browser.storage.local.set({
@@ -91,38 +103,29 @@ function submit() {
       });
     } else {
       const justProfileGroup = s[Object.keys(s)[0]];
-      console.log("FOUND");
-      console.log(s);
       justProfileGroup[profileName] = {
         name: profileName,
         url: profileURL,
         isModeOn: false,
+        blockedClasses: [],
       };
-      console.log(justProfileGroup);
 
-      // s[profileName] = {
-      //   name: profileName,
-      //   url: profileURL,
-      //   isModeOn: false,
-      // };
       browser.storage.local.set({ [storageName]: justProfileGroup });
     }
   });
 
+  // clear form after submission complete
   document.getElementById("pname").value = "";
   document.getElementById("url").value = "";
   document.getElementById("invalidCreate").innerText = "";
   document.getElementById("validCreate").innerText =
     "Success, profile " + profileName + " created.";
-
-  return;
-
-  // const storageName = "profile" + profileName;
-  // browser.storage.local.set({
-  //   [storageName]: { name: profileName, url: profileURL, isModeOn: false },
-  // });
 }
 
+/*
+ * Creates table under "Manage Profiles Tab".
+ * Adds row for each profile defined.
+ */
 function createProfilesTable() {
   var myTable = document.getElementById("profilesTable");
   var rowCount = myTable.rows.length;
@@ -139,6 +142,10 @@ function createProfilesTable() {
   });
 }
 
+/*
+ * Used when creating Profiles Table under "Manage Profiles Tab".
+ * Appends a profile to the table.
+ */
 function appendProfile(name, url, isModeOn) {
   const profilesTable = document.getElementById("profilesTable");
 
@@ -178,6 +185,9 @@ function appendProfile(name, url, isModeOn) {
   profilesTable.append(newRow);
 }
 
+/*
+ * Remove a profile from storage and reloads table.
+ */
 function deleteProfile(name) {
   const deleteProfile = browser.storage.local.remove(["profile" + name]);
   deleteProfile.then(() => {

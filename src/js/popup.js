@@ -1,8 +1,8 @@
-import { URL_REGEXP } from "./constants.js";
-
-/**
+/*
  * Script running in the toolbar popup.
  */
+
+import { URL_REGEXP } from "./constants.js";
 
 function hideElemByClassCSS(cclass) {
   return (
@@ -16,6 +16,10 @@ function hideElemByClassCSS(cclass) {
 
 var matchingProfiles = [];
 
+/*
+ * Runs at first load of page.
+ * Finds and displays all profiles applicable to current page.
+ */
 async function onLoad() {
   const addProfileButton = document.getElementById("createProfileButton");
   addProfileButton.addEventListener("click", function () {
@@ -55,6 +59,9 @@ async function onLoad() {
   // listenForClicks(curTab);
 }
 
+/*
+ * Returns an array of all profiles that can be used for the argument URL.
+ */
 async function findMatchingProfiles(url) {
   const tabHostname = new URL(url).hostname.replace(/^(www\.)/, "");
   const profileGroupName = "profilesFor" + tabHostname;
@@ -64,10 +71,6 @@ async function findMatchingProfiles(url) {
   const res = [];
 
   for (const key in profilesMatchingHostname) {
-    console.log("Key");
-    console.log(profilesMatchingHostname[key]);
-    console.log(url);
-    console.log(profilesMatchingHostname[key].url);
     if (url.includes(profilesMatchingHostname[key].url)) {
       res.push(profilesMatchingHostname[key]);
     }
@@ -96,12 +99,12 @@ function updateButtonColor(tab) {
   });
 }
 
+/*
+ * Adds buttons for all applicable profiles for current page.
+ */
 function updateProfilesList() {
   const list = document.getElementById("profList");
   list.innerHTML = "";
-  console.log("MATCHING");
-  console.log(matchingProfiles);
-  console.log("MATCHING");
   for (var i = 0; i < matchingProfiles.length; i++) {
     const profBtn = document.createElement("button");
     profBtn.innerText = matchingProfiles[i].name;
