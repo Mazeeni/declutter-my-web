@@ -7,11 +7,20 @@
   </head>
   <body>
     <div id="elementDetails">
-      <button class="navParent" id="upParentBtn"><img src="icons/arrow-up.svg" /></button>
-      <button class="navParent" id="downParentBtn"><img src="icons/arrow-down.svg" /></button>
-      <p id="elemOuterHTML" className="elemHTML"></p>
-      <div id="elemClassList"></div>
-      <div id="addToProfileBtns"></div>
+      <div class="mainDiv">
+        <h2>Class Selector</h2>
+        <button class="navParent" id="upParentBtn">To Parent Element<img src="icons/arrow-up.svg" /></button>
+        <button class="navParent" id="downParentBtn"><img src="icons/arrow-down.svg" />To Child Element</button>
+        <p id="elemOuterHTML" className="elemHTML"></p>
+        <div id="elemClassList"></div>
+        <p>Currently selected classes to blacklist:</p>
+        <div  id="selectedClasses"></div>
+      </div>
+      <div class="mainDiv">
+        <h2>Add classes to profiles</h2>
+        <p>Add the selected classes to compatible profiles below:</p>
+        <div id="addToProfileBtns"></div>
+      </div>
     </p>
   </body>
   <script src="js/filterPopup.js"></script>

@@ -6,3 +6,14 @@
 .navParent:disabled {
   opacity: 0.2;
 }
+
+.mainDiv {
+  min-height: 50px;
+  outline-color: darkgrey;
+  outline-width: 1px;
+  outline-style: solid;
+}
+
+.classCheckbox:hover {
+  background-color: bisque;
+}

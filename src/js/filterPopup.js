@@ -6,8 +6,8 @@
 
 const elemOuterHTML = document.getElementById("elemOuterHTML");
 const elemClassList = document.getElementById("elemClassList");
+var selectedClasses = new Set();
 var port = 0;
-var checked = 0;
 var currParentIndex = -1;
 var parentElemsHTML = [];
 var parentElemsClassLists = [];
@@ -60,6 +60,7 @@ function initialiseTargetElements(msgParentElems, msgElemsClassLists) {
     const text = document.createTextNode(className);
     const classCheckBox = document.createElement("input");
 
+    classCheckLabel.classList = "classCheckbox";
     classCheckBox.type = "checkbox";
     classCheckBox.value = className;
 
@@ -69,15 +70,11 @@ function initialiseTargetElements(msgParentElems, msgElemsClassLists) {
 
     classCheckBox.addEventListener("change", (e) => {
       if (e.target.checked) {
-        checked++;
-        if (checked === 1) {
-          disableParentNav();
-        }
+        selectedClasses.add(e.target.value);
+        updateSelectedClasses();
       } else {
-        checked--;
-        if (checked === 0) {
-          enableParentNav();
-        }
+        selectedClasses.delete(e.target.value);
+        updateSelectedClasses();
       }
     });
 
@@ -85,6 +82,33 @@ function initialiseTargetElements(msgParentElems, msgElemsClassLists) {
   });
 
   addListenerHighlightElem(elemOuterHTML);
+
+  initialiseAddToProfileBtns();
+}
+
+async function initialiseAddToProfileBtns() {
+  const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+  var url = tabs[0].url;
+
+  const tabHostname = new URL(url).hostname.replace(/^(www\.)/, "");
+  const profileGroupName = "profilesFor" + tabHostname;
+
+  const allProfiles = await browser.storage.local.get(profileGroupName);
+  const profilesMatchingHostname = allProfiles[Object.keys(allProfiles)[0]];
+  const res = [];
+
+  for (const key in profilesMatchingHostname) {
+    if (url.includes(profilesMatchingHostname[key].url)) {
+      res.push(profilesMatchingHostname[key]);
+    }
+  }
+
+  const div = document.getElementById("addToProfileBtns");
+  for (var i = 0; i < res.length; i++) {
+    const addBtn = document.createElement("button");
+    addBtn.innerText = "Add to profile: " + res[i].name;
+    div.appendChild(addBtn);
+  }
 }
 
 function addListenerHighlightElem(elem) {
@@ -153,23 +177,27 @@ function switchParent(up) {
 
     classCheckBox.addEventListener("change", (e) => {
       if (e.target.checked) {
-        checked++;
-        if (checked === 1) {
-          disableParentNav();
-        }
+        selectedClasses.add(e.target.value);
+        updateSelectedClasses();
       } else {
-        checked--;
-        if (checked === 0) {
-          enableParentNav();
-        }
+        selectedClasses.delete(e.target.value);
+        updateSelectedClasses();
       }
     });
+
+    if (selectedClasses.has(classCheckBox.value)) {
+      classCheckBox.checked = true;
+    }
 
     classCheckLabel.appendChild(classCheckBox);
     classCheckLabel.appendChild(text);
     elemClassList.appendChild(classCheckLabel);
   });
-  checked = 0;
+}
+
+function updateSelectedClasses() {
+  document.getElementById("selectedClasses").innerText =
+    Array.from(selectedClasses).join(" ");
 }
 
 document
