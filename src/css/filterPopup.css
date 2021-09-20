@@ -2,3 +2,7 @@
   background-color: bisque;
   cursor: pointer;
 }
+
+.navParent:disabled {
+  opacity: 0.2;
+}
