@@ -17,3 +17,11 @@
 .classCheckbox:hover {
   background-color: bisque;
 }
+
+.hidden {
+  display: none;
+}
+
+.successMessage {
+  color: green;
+}
