@@ -53,12 +53,26 @@ async function newPageOpened(tabId) {
         currProfileGroup[key].isModeOn
       ) {
         // ready to apply profile to page.
-        break;
+        console.log("WE ARE READY");
+        currProfileGroup[key].blockedClasses.forEach((c) => {
+          browser.tabs.insertCSS(tabId, { code: hideElemByClassCSS(c) });
+        });
       }
+      console.log("NEGATIVE");
       // go thru profiles and look for active one
       // otherwise default to first profile
     }
   }
+}
+
+function hideElemByClassCSS(cclass) {
+  return (
+    `.` +
+    cclass +
+    `{
+      display: none;
+    }`
+  );
 }
 
 browser.tabs.onUpdated.addListener(newPageOpened, { properties: ["url"] });

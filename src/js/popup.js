@@ -4,16 +4,6 @@
 
 import { URL_REGEXP } from "./constants.js";
 
-function hideElemByClassCSS(cclass) {
-  return (
-    `.` +
-    cclass +
-    `{
-      display: none;
-    }`
-  );
-}
-
 var matchingProfiles = [];
 var matchingProfilesStatuses = [];
 
@@ -141,32 +131,11 @@ async function switchProfileStatus(index) {
   });
 
   updateProfilesList();
+  browser.tabs.reload(tabs[0].id);
 }
 
 function listenForClicks(tab) {
   document.addEventListener("click", (e) => {
-    function switchFocus() {
-      const allPages = browser.storage.local.get("allPagesSettings");
-
-      allPages.then((pgs) => {
-        const isModeOn = pgs.allPagesSettings[tab.url].isModeOn;
-        if (isModeOn) {
-          console.log("Switching focus off");
-          browser.storage.local.set({
-            allPagesSettings: { [tab.url]: { isModeOn: false } },
-          });
-          unfocusCSS();
-        } else {
-          console.log("Switching focus on");
-          browser.storage.local.set({
-            allPagesSettings: { [tab.url]: { isModeOn: true } },
-          });
-          focusCSS();
-        }
-        // updateButtonColor(tab);
-      });
-    }
-
     // removes unnecessary elements
     function focusCSS() {
       elemClassesToHide.forEach((c) => {

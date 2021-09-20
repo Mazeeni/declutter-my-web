@@ -17,7 +17,7 @@
     }
   },
 
-  "permissions": ["activeTab", "menus", "storage", "tabs"],
+  "permissions": ["<all_urls>", "activeTab", "menus", "storage", "tabs"],
 
   "browser_action": {
     "default_icon": "src/icons/wire-cutter.svg",
