@@ -72,7 +72,6 @@ async function findMatchingProfiles(url) {
 console.log("Current storage:");
 const allStorage = browser.storage.local.get();
 allStorage.then((s) => console.log(s));
-
 // clear storage
 // browser.storage.local.clear();
 

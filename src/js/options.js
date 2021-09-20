@@ -134,10 +134,18 @@ function createProfilesTable() {
   }
 
   const allProfiles = browser.storage.local.get();
-  allProfiles.then((ps) => {
-    for (const key in ps) {
-      const profile = ps[key];
-      appendProfile(profile.name, profile.url, profile.isModeOn);
+  allProfiles.then((profGroup) => {
+    for (const groupKey in profGroup) {
+      for (const profileKey in profGroup[groupKey]) {
+        const profile = profGroup[groupKey][profileKey];
+        appendProfile(
+          profile.name,
+          profile.url,
+          profile.isModeOn,
+          profile.blockedClasses,
+          groupKey
+        );
+      }
     }
   });
 }
@@ -146,7 +154,7 @@ function createProfilesTable() {
  * Used when creating Profiles Table under "Manage Profiles Tab".
  * Appends a profile to the table.
  */
-function appendProfile(name, url, isModeOn) {
+function appendProfile(name, url, isModeOn, blockedClasses, groupName) {
   const profilesTable = document.getElementById("profilesTable");
 
   let newRow = document.createElement("tr");
@@ -161,6 +169,9 @@ function appendProfile(name, url, isModeOn) {
   let profileMode = document.createElement("td");
   profileMode.innerText = isModeOn;
 
+  let profileBlocked = document.createElement("td");
+  profileBlocked.innerText = blockedClasses.join(" ");
+
   let profileRemove = document.createElement("td");
   // let deleteBtn = document.createElement("button");
 
@@ -171,7 +182,7 @@ function appendProfile(name, url, isModeOn) {
   // deleteBtn.innerHTML = "<img src='../icons/delete.svg' alt='Delete'/>";
   // console.log(deleteBtn.outerHTML);
   deleteImg.addEventListener("click", function () {
-    deleteProfile(name);
+    deleteProfile(name, groupName);
   });
 
   profileRemove.append(deleteImg);
@@ -181,6 +192,7 @@ function appendProfile(name, url, isModeOn) {
   newRow.append(profileName);
   newRow.append(profileURL);
   newRow.append(profileMode);
+  newRow.append(profileBlocked);
   newRow.append(profileRemove);
   profilesTable.append(newRow);
 }
@@ -188,11 +200,14 @@ function appendProfile(name, url, isModeOn) {
 /*
  * Remove a profile from storage and reloads table.
  */
-function deleteProfile(name) {
-  const deleteProfile = browser.storage.local.remove(["profile" + name]);
-  deleteProfile.then(() => {
-    document.getElementById("manageProfilesBtn").click();
+async function deleteProfile(name, groupName) {
+  var profileGroup = await browser.storage.local.get(groupName);
+  profileGroup = profileGroup[Object.keys(profileGroup)[0]];
+  delete profileGroup[name];
+  await browser.storage.local.set({
+    [groupName]: profileGroup,
   });
+  document.getElementById("manageProfilesBtn").click();
 }
 
 document.addEventListener("DOMContentLoaded", onLoad);
