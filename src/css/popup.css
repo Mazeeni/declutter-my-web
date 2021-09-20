@@ -5,3 +5,11 @@
 .text-muted {
   opacity: 0.5;
 }
+
+.profileActiveBtn {
+  background-color: seagreen;
+}
+
+.profileInactiveBtn {
+  background-color: crimson;
+}

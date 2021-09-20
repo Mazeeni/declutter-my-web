@@ -108,6 +108,11 @@ function updateProfilesList() {
   for (var i = 0; i < matchingProfiles.length; i++) {
     const profBtn = document.createElement("button");
     profBtn.innerText = matchingProfiles[i].name;
+    if (matchingProfiles[i].isModeOn) {
+      profBtn.classList = "profileActiveBtn";
+    } else {
+      profBtn.classList = "profileInactiveBtn";
+    }
     list.appendChild(profBtn);
   }
 }
@@ -160,7 +165,6 @@ function listenForClicks(tab) {
 
 function popupShowProfile(name) {
   document.querySelector("#popup-profile-valid").classList.remove("hidden");
-  document.getElementById("activeProfileName").innerText = name;
 }
 
 function popupShowInvalidPage() {
