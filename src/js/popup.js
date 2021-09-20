@@ -15,6 +15,7 @@ function hideElemByClassCSS(cclass) {
 }
 
 var matchingProfiles = [];
+var matchingProfilesStatuses = [];
 
 /*
  * Runs at first load of page.
@@ -39,11 +40,10 @@ async function onLoad() {
           for (var i = 0; i < ps.length; i++) {
             matchingProfiles.push(ps[i]);
             if (ps[i].isModeOn === true) {
-              popupShowProfile(ps[i].name);
               matchingProfiles.push([...ps.slice(i + 1)]);
-              break;
-            } else if (i === ps.length - 1) {
-              popupShowProfile(ps[0].name);
+              matchingProfilesStatuses.push(true);
+            } else {
+              matchingProfilesStatuses.push(false);
             }
           }
           updateProfilesList();
@@ -113,8 +113,34 @@ function updateProfilesList() {
     } else {
       profBtn.classList = "profileInactiveBtn";
     }
+    const index = i;
+    profBtn.addEventListener("click", () => {
+      switchProfileStatus(index);
+    });
     list.appendChild(profBtn);
   }
+}
+
+async function switchProfileStatus(index) {
+  console.log("Switching profile status: " + index);
+  const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+
+  const tabHostname = new URL(tabs[0].url).hostname.replace(/^(www\.)/, "");
+  const profileGroupName = "profilesFor" + tabHostname;
+
+  const allProfiles = await browser.storage.local.get(profileGroupName);
+  var profilesMatchingHostname = allProfiles[Object.keys(allProfiles)[0]];
+
+  const profile = matchingProfiles[index];
+  profile.isModeOn = !profile.isModeOn;
+
+  profilesMatchingHostname[matchingProfiles[index].name] = profile;
+
+  await browser.storage.local.set({
+    [profileGroupName]: profilesMatchingHostname,
+  });
+
+  updateProfilesList();
 }
 
 function listenForClicks(tab) {
@@ -137,7 +163,7 @@ function listenForClicks(tab) {
           });
           focusCSS();
         }
-        updateButtonColor(tab);
+        // updateButtonColor(tab);
       });
     }
 
