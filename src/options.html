@@ -61,6 +61,23 @@
         </thead>
         <tbody id="profilesTableBody"></tbody>
       </table>
+      <br />
+      <h3>Update Profile</h3>
+      <p>Manually change the url, or classes here.</p>
+      <label><b>Profile to update</b></label>
+      <input
+        id="profileUpdateName"
+        type="text"
+        placeholder="Profile Name (required)"
+      />
+      <label><b>URL to update</b></label>
+      <input id="profileUpdateURL" type="text" placeholder="(optional)" />
+      <label><b>List of blocked classes to update</b></label>
+      <input id="profileUpdateClasses" type="text" placeholder="(optional)" />
+
+      <button id="submitProfileUpdate">Update</button>
+      <p class="invalidMessage" id="invalidUpdate"></p>
+      <p class="validMessage" id="validUpdate"></p>
     </div>
 
     <div id="aboutTab" class="tabContent">

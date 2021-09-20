@@ -24,6 +24,12 @@ function onLoad() {
     }
   });
 
+  document
+    .getElementById("submitProfileUpdate")
+    .addEventListener("click", () => {
+      validateProfileUpdate();
+    });
+
   // open default page
   document.getElementById("manageProfilesBtn").click();
 }
@@ -70,6 +76,79 @@ function validate() {
   }
 
   return true;
+}
+
+async function validateProfileUpdate() {
+  const profileName = document.getElementById("profileUpdateName").value;
+  const allProfiles = await browser.storage.local.get();
+  var groupName = "";
+  var found = false;
+  for (const groupKey in allProfiles) {
+    for (const profileKey in allProfiles[groupKey]) {
+      if (profileName === profileKey) {
+        found = true;
+        groupName = groupKey;
+      }
+    }
+    if (found) {
+      break;
+    }
+  }
+  if (!found) {
+    if (profileName === "" || !!PROF_NAME_REGEXP.test(profileName)) {
+      document.getElementById("invalidUpdate").innerText =
+        "Invalid profile name, must only contain alphanumerical characters and underscores (no spaces).";
+      return false;
+    } else {
+      document.getElementById("invalidUpdate").innerText =
+        "Profile with that name not found.";
+    }
+  } else {
+    document.getElementById("invalidUpdate").innerText = "";
+    document.getElementById("validUpdate").innerText =
+      "Profile updated, refreshing...";
+
+    var profileGroup = await browser.storage.local.get(groupName);
+    profileGroup = profileGroup[Object.keys(profileGroup)[0]];
+    const newURL = document.getElementById("profileUpdateURL").value;
+    var newClasses = document
+      .getElementById("profileUpdateClasses")
+      .value.split(" ");
+    if (newClasses[0] === "") {
+      newClasses = [];
+    }
+    console.log(newClasses.length);
+    profileGroup[profileName] = {
+      name: profileName,
+      url: newURL === "" ? profileGroup[profileName].url : newURL,
+      isModeOn: profileGroup[profileName].isModeOn,
+      blockedClasses:
+        newClasses === [""]
+          ? profileGroup[profileName].blockedClasses
+          : newClasses,
+    };
+
+    await browser.storage.local.set({
+      [groupName]: profileGroup,
+    });
+    document.getElementById("manageProfilesBtn").click();
+  }
+
+  return;
+
+  // if (profileName === "" || !!PROF_NAME_REGEXP.test(profileName)) {
+  //   document.getElementById("invalidCreate").innerText =
+  //     "Invalid profile name, must only contain alphanumerical characters and underscores (no spaces).";
+  //   return false;
+  // }
+  // const profileURL = document.getElementById("url").value;
+  // if (!URL_REGEXP.test(profileURL)) {
+  //   document.getElementById("invalidCreate").innerText =
+  //     "Invalid url, try again.";
+  //   return false;
+  // }
+
+  // return true;
 }
 
 /*
