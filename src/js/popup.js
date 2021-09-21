@@ -157,10 +157,6 @@ function listenForClicks(tab) {
   });
 }
 
-function popupShowProfile(name) {
-  document.querySelector("#popup-profile-valid").classList.remove("hidden");
-}
-
 function popupShowInvalidPage() {
   document.querySelector("#popup-page-invalid").classList.remove("hidden");
 }

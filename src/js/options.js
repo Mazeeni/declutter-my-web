@@ -135,20 +135,6 @@ async function validateProfileUpdate() {
   }
 
   return;
-
-  // if (profileName === "" || !!PROF_NAME_REGEXP.test(profileName)) {
-  //   document.getElementById("invalidCreate").innerText =
-  //     "Invalid profile name, must only contain alphanumerical characters and underscores (no spaces).";
-  //   return false;
-  // }
-  // const profileURL = document.getElementById("url").value;
-  // if (!URL_REGEXP.test(profileURL)) {
-  //   document.getElementById("invalidCreate").innerText =
-  //     "Invalid url, try again.";
-  //   return false;
-  // }
-
-  // return true;
 }
 
 /*
@@ -258,16 +244,11 @@ function appendProfile(name, url, isModeOn, blockedClasses, groupName) {
   deleteImg.src = "icons/delete.svg";
   deleteImg.alt = "Delete";
   deleteImg.classList += "deleteProfile";
-  // deleteBtn.innerHTML = "<img src='../icons/delete.svg' alt='Delete'/>";
-  // console.log(deleteBtn.outerHTML);
   deleteImg.addEventListener("click", function () {
     deleteProfile(name, groupName);
   });
 
   profileRemove.append(deleteImg);
-  // deleteBtn.append(deleteImg);
-  // removeProfile.innerHTML = newRow.append(profileName);
-
   newRow.append(profileName);
   newRow.append(profileURL);
   newRow.append(profileMode);
