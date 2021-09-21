@@ -27,15 +27,7 @@ async function onLoad() {
       const profs = findMatchingProfiles(url);
       profs.then((ps) => {
         if (ps.length > 0) {
-          for (var i = 0; i < ps.length; i++) {
-            matchingProfiles.push(ps[i]);
-            if (ps[i].isModeOn === true) {
-              matchingProfiles.push([...ps.slice(i + 1)]);
-              matchingProfilesStatuses.push(true);
-            } else {
-              matchingProfilesStatuses.push(false);
-            }
-          }
+          matchingProfiles.push(...ps);
           updateProfilesList();
         } else {
           popupShowNoProfiles();
@@ -122,6 +114,18 @@ function debugStorage() {
   console.log("Current storage:");
   const allStorage = browser.storage.local.get();
   allStorage.then((s) => console.log(s));
+}
+
+debugStorage();
+// setStorage();
+
+async function setStorage() {
+  let profiles = await browser.storage.local.get("profilesForbbc.co.uk");
+  profiles = profiles[Object.keys(profiles)[0]];
+  delete profiles["undefined"];
+  await browser.storage.local.set({
+    "profilesForbbc.co.uk": profiles,
+  });
 }
 
 function clearStorage() {

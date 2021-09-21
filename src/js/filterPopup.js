@@ -7,13 +7,13 @@
 const elemOuterHTML = document.getElementById("elemOuterHTML");
 const elemClassList = document.getElementById("elemClassList");
 var selectedClasses = new Set();
-var port = 0;
-var currParentIndex = -1;
-var parentElemsHTML = [];
-var parentElemsClassLists = [];
-var tab;
-var profileGroupName;
-var allGroupProfiles;
+let port = 0;
+let currParentIndex = -1;
+let parentElemsHTML = [];
+let parentElemsClassLists = [];
+let tab;
+let profileGroupName;
+let allGroupProfiles;
 
 /*
  * Injects content script into page.
@@ -46,7 +46,6 @@ async function onLoad() {
 
   port.onMessage.addListener((msg) => {
     if (msg.action === "returnTargetElements") {
-      console.log(msg.elemClassLists);
       initialiseTargetElements(msg.elemsSlicedHTML, msg.elemsClassLists);
     }
   });
@@ -62,7 +61,6 @@ async function onLoad() {
  * of its classes as buttons. Hovering over the buttons highlights all
  */
 function initialiseTargetElements(msgParentElems, msgElemsClassLists) {
-  console.log("initialiseTargetElements");
   currParentIndex = 0;
   parentElemsHTML = msgParentElems;
   parentElemsClassLists = msgElemsClassLists;
@@ -99,7 +97,7 @@ function initialiseTargetElements(msgParentElems, msgElemsClassLists) {
   initialiseAddToProfileBtns();
 }
 
-async function initialiseAddToProfileBtns() {
+function initialiseAddToProfileBtns() {
   const res = [];
 
   for (const key in allGroupProfiles) {
@@ -114,9 +112,10 @@ async function initialiseAddToProfileBtns() {
     addBtn.innerText = "Add to profile: " + res[i].name;
 
     const profName = res[i].name;
-    addBtn.addEventListener("click", () =>
-      addSelectedClassesToProfile(profName)
-    );
+    addBtn.addEventListener("click", () => {
+      addSelectedClassesToProfile(profName);
+      browser.runtime.sendMessage({ action: "refreshCSS", tabId: tab.id });
+    });
     div.appendChild(addBtn);
   }
 }
@@ -163,16 +162,6 @@ function unhighlightAll() {
   port.postMessage({
     action: "unhighlightAll",
   });
-}
-
-function enableParentNav() {
-  document.getElementById("upParentBtn").disabled = false;
-  document.getElementById("downParentBtn").disabled = false;
-}
-
-function disableParentNav() {
-  document.getElementById("upParentBtn").disabled = true;
-  document.getElementById("downParentBtn").disabled = true;
 }
 
 /*

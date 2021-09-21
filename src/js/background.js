@@ -39,6 +39,7 @@ browser.runtime.onMessage.addListener(async (msg) => {
  * Enables declutter mode if page valid.
  */
 async function newPageOpened(tabId) {
+  console.log("REFRESSHSHH");
   const tab = await browser.tabs.get(tabId);
   const tabDomainName = new URL(tab.url).hostname.replace(/^(www\.)/, "");
   const storageName = "profilesFor" + tabDomainName;
