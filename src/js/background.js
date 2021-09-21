@@ -43,7 +43,6 @@ async function newPageOpened(tabId) {
   const tabDomainName = new URL(tab.url).hostname.replace(/^(www\.)/, "");
   const storageName = "profilesFor" + tabDomainName;
   const allProfileGroups = await browser.storage.local.get(storageName);
-  console.log(allProfileGroups);
 
   if (Object.entries(allProfileGroups).length !== 0) {
     const currProfileGroup = allProfileGroups[Object.keys(allProfileGroups)[0]];
@@ -52,15 +51,14 @@ async function newPageOpened(tabId) {
         tab.url.includes(currProfileGroup[key].url) &&
         currProfileGroup[key].isModeOn
       ) {
-        // ready to apply profile to page.
-        console.log("WE ARE READY");
         currProfileGroup[key].blockedClasses.forEach((c) => {
           browser.tabs.insertCSS(tabId, { code: hideElemByClassCSS(c) });
         });
+      } else if (tab.url.includes(currProfileGroup[key].url)) {
+        currProfileGroup[key].blockedClasses.forEach((c) => {
+          browser.tabs.removeCSS(tabId, { code: hideElemByClassCSS(c) });
+        });
       }
-      console.log("NEGATIVE");
-      // go thru profiles and look for active one
-      // otherwise default to first profile
     }
   }
 }
@@ -76,3 +74,8 @@ function hideElemByClassCSS(cclass) {
 }
 
 browser.tabs.onUpdated.addListener(newPageOpened, { properties: ["url"] });
+browser.runtime.onMessage.addListener((msg) => {
+  if (msg.action === "refreshCSS") {
+    newPageOpened(msg.tabId);
+  }
+});

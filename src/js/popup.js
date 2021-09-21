@@ -75,19 +75,6 @@ allStorage.then((s) => console.log(s));
 // clear storage
 // browser.storage.local.clear();
 
-function updateButtonColor(tab) {
-  return;
-  const allPages = browser.storage.local.get();
-  allPages.then((pgs) => {
-    const isModeOn = pgs.allPagesSettings[tab.url].isModeOn;
-    if (isModeOn) {
-      document.getElementById("power-button").src = "icons/power-on.svg";
-    } else {
-      document.getElementById("power-button").src = "icons/power-off.svg";
-    }
-  });
-}
-
 /*
  * Adds buttons for all applicable profiles for current page.
  */
@@ -130,7 +117,8 @@ async function switchProfileStatus(index) {
   });
 
   updateProfilesList();
-  browser.tabs.reload(tabs[0].id);
+  browser.runtime.sendMessage({ action: "refreshCSS", tabId: tabs[0].id });
+  // browser.tabs.reload(tabs[0].id);
 }
 
 function listenForClicks(tab) {
