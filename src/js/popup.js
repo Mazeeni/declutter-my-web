@@ -43,10 +43,6 @@ async function onLoad() {
       });
     }
   });
-
-  // updateButtonColor(curTab);
-
-  // listenForClicks(curTab);
 }
 
 /*
@@ -67,13 +63,6 @@ async function findMatchingProfiles(url) {
   }
   return res;
 }
-
-// debug print all storage
-console.log("Current storage:");
-const allStorage = browser.storage.local.get();
-allStorage.then((s) => console.log(s));
-// clear storage
-// browser.storage.local.clear();
 
 /*
  * Adds buttons for all applicable profiles for current page.
@@ -98,7 +87,6 @@ function updateProfilesList() {
 }
 
 async function switchProfileStatus(index) {
-  console.log("Switching profile status: " + index);
   const tabs = await browser.tabs.query({ active: true, currentWindow: true });
 
   const tabHostname = new URL(tabs[0].url).hostname.replace(/^(www\.)/, "");
@@ -118,31 +106,6 @@ async function switchProfileStatus(index) {
 
   updateProfilesList();
   browser.runtime.sendMessage({ action: "refreshCSS", tabId: tabs[0].id });
-  // browser.tabs.reload(tabs[0].id);
-}
-
-function listenForClicks(tab) {
-  document.addEventListener("click", (e) => {
-    // removes unnecessary elements
-    function focusCSS() {
-      elemClassesToHide.forEach((c) => {
-        browser.tabs.insertCSS(tab.id, { code: hideElemByClassCSS(c) });
-      });
-    }
-
-    // shows previously removed elements
-    function unfocusCSS() {
-      elemClassesToHide.forEach((c) => {
-        browser.tabs.removeCSS(tab.id, { code: hideElemByClassCSS(c) });
-      });
-    }
-
-    if (e.target.classList.contains("power-button")) {
-      switchFocus();
-    } else {
-      console.log("Button didn't trigger correctly");
-    }
-  });
 }
 
 function popupShowInvalidPage() {
@@ -153,15 +116,14 @@ function popupShowNoProfiles() {
   document.querySelector("#popup-profile-invalid").classList.remove("hidden");
 }
 
-function reportExecuteScriptError(error) {
-  disableAddonOptions();
-  console.error(`Failed to execute content script: ${error.message}`);
-}
-
 document.addEventListener("DOMContentLoaded", onLoad);
 
-// const currentTab = browser.tabs.query({
-//   currentWindow: true,
-//   active: true,
-// });
-// currentTab.then(onGot, onError);
+function debugStorage() {
+  console.log("Current storage:");
+  const allStorage = browser.storage.local.get();
+  allStorage.then((s) => console.log(s));
+}
+
+function clearStorage() {
+  browser.storage.local.clear();
+}
