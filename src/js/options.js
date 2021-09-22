@@ -1,7 +1,9 @@
 import { URL_REGEXP, PROF_NAME_REGEXP } from "./constants.js";
 
-/*
- * Sets up options page once HTML loads.
+// Values: manageProfiles, createProfile, about.
+const DEFAULT_PAGE = "manageProfiles";
+
+/**
  * Creates event listeners for tabs and buttons.
  * Opens default page.
  */
@@ -19,8 +21,8 @@ function onLoad() {
   // submit button event
   const submitButton = document.getElementById("submitProfile");
   submitButton.addEventListener("click", function () {
-    if (validate()) {
-      submit();
+    if (validateProfileCreate()) {
+      submitNewProfile();
     }
   });
 
@@ -31,23 +33,23 @@ function onLoad() {
     });
 
   // open default page
-  document.getElementById("manageProfilesBtn").click();
+  document.getElementById(DEFAULT_PAGE + "Btn").click();
 }
 
-/*
- * Tab switching functionality for Options page.
+/**
+ * Tab switching functionality.
  */
 function openTab(tabName) {
   if (tabName === "manageProfiles") {
     createProfilesTable();
   }
 
-  var i;
-  var tabContent = document.getElementsByClassName("tabContent");
+  let i;
+  let tabContent = document.getElementsByClassName("tabContent");
   for (i = 0; i < tabContent.length; i++) {
     tabContent[i].style.display = "none";
   }
-  var tabButton = document.getElementsByClassName("tabButton");
+  let tabButton = document.getElementsByClassName("tabButton");
   for (i = 0; i < tabButton.length; i++) {
     tabButton[i].className = tabButton[i].className.replace(" active", "");
   }
@@ -56,11 +58,11 @@ function openTab(tabName) {
   document.getElementById([tabName + "Btn"]).className += " active";
 }
 
-/*
+/**
  * Validate the "Create a Profile" form, writing error messages
  * to page if invalid.
  */
-function validate() {
+function validateProfileCreate() {
   const profileName = document.getElementById("pname").value;
 
   if (profileName === "" || !!PROF_NAME_REGEXP.test(profileName)) {
@@ -81,8 +83,8 @@ function validate() {
 async function validateProfileUpdate() {
   const profileName = document.getElementById("profileUpdateName").value;
   const allProfiles = await browser.storage.local.get();
-  var groupName = "";
-  var found = false;
+  let groupName = "";
+  let found = false;
   for (const groupKey in allProfiles) {
     for (const profileKey in allProfiles[groupKey]) {
       if (profileName === profileKey) {
@@ -141,7 +143,7 @@ async function validateProfileUpdate() {
  * Submit new profile.
  * Add to storage.
  */
-function submit() {
+function submitNewProfile() {
   const profileName = document.getElementById("pname").value;
   const profileURL = document.getElementById("url").value;
   var profileStrippedProtocol = profileURL;
