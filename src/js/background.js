@@ -1,4 +1,4 @@
-var filterParams;
+let filterParams;
 
 browser.menus.create({
   id: "filter_element",
@@ -33,13 +33,11 @@ browser.runtime.onMessage.addListener(async (msg) => {
   }
 });
 
-/*
- * Callback when a tab navigates to a new url.
+/**
  * Check if page has any matching profiles.
  * Enables declutter mode if page valid.
  */
-async function newPageOpened(tabId) {
-  console.log("REFRESSHSHH");
+async function declutterPage(tabId) {
   const tab = await browser.tabs.get(tabId);
   const tabDomainName = new URL(tab.url).hostname.replace(/^(www\.)/, "");
   const storageName = "profilesFor" + tabDomainName;
@@ -48,35 +46,44 @@ async function newPageOpened(tabId) {
   if (Object.entries(allProfileGroups).length !== 0) {
     const currProfileGroup = allProfileGroups[Object.keys(allProfileGroups)[0]];
     for (const key in currProfileGroup) {
-      if (
-        tab.url.includes(currProfileGroup[key].url) &&
-        currProfileGroup[key].isModeOn
-      ) {
-        currProfileGroup[key].blockedClasses.forEach((c) => {
-          browser.tabs.insertCSS(tabId, { code: hideElemByClassCSS(c) });
-        });
-      } else if (tab.url.includes(currProfileGroup[key].url)) {
-        currProfileGroup[key].blockedClasses.forEach((c) => {
-          browser.tabs.removeCSS(tabId, { code: hideElemByClassCSS(c) });
-        });
+      if (tab.url.includes(currProfileGroup[key].url)) {
+        if (currProfileGroup[key].isModeOn) {
+          currProfileGroup[key].blockedClasses.forEach((c) => {
+            browser.tabs.insertCSS(tabId, { code: hideElemByClassCSS(c) });
+          });
+        } else {
+          currProfileGroup[key].blockedClasses.forEach((c) => {
+            browser.tabs.removeCSS(tabId, { code: hideElemByClassCSS(c) });
+          });
+        }
       }
     }
   }
 }
 
-function hideElemByClassCSS(cclass) {
+/**
+ * Returns CSS code (as String) which will hide all elements with class name.
+ */
+function hideElemByClassCSS(className) {
   return (
     `.` +
-    cclass +
+    className +
     `{
       display: none;
     }`
   );
 }
 
-browser.tabs.onUpdated.addListener(newPageOpened, { properties: ["url"] });
+/**
+ * Event triggered when any tab visits a new URL.
+ */
+browser.tabs.onUpdated.addListener(declutterPage, { properties: ["url"] });
+
+/**
+ * Event triggered when a message recieved.
+ */
 browser.runtime.onMessage.addListener((msg) => {
   if (msg.action === "refreshCSS") {
-    newPageOpened(msg.tabId);
+    declutterPage(msg.tabId);
   }
 });
