@@ -29,6 +29,7 @@ async function onLoad() {
         if (ps.length > 0) {
           matchingProfiles.push(...ps);
           updateProfilesList();
+          popupShowValidPage();
         } else {
           popupShowNoProfiles();
         }
@@ -98,6 +99,10 @@ async function switchProfileStatus(index) {
 
   updateProfilesList();
   browser.runtime.sendMessage({ action: "refreshCSS", tabId: tabs[0].id });
+}
+
+function popupShowValidPage() {
+  document.querySelector("#popup-profile-valid").classList.remove("hidden");
 }
 
 function popupShowInvalidPage() {
