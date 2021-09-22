@@ -1,44 +1,57 @@
-/*
+/**
  * Script running in the toolbar popup.
  */
 
 import { URL_REGEXP } from "./constants.js";
 
-var matchingProfiles = [];
-var matchingProfilesStatuses = [];
+let matchingProfiles = [];
+let tab;
 
-/*
- * Runs at first load of page.
+/**
  * Finds and displays all profiles applicable to current page.
  */
 async function onLoad() {
-  const addProfileButton = document.getElementById("createProfileButton");
-  addProfileButton.addEventListener("click", function () {
+  const optionsBtn = document.getElementById("optionsBtn");
+  optionsBtn.addEventListener("click", function () {
     browser.tabs.create({
       url: "options.html",
     });
   });
 
-  browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-    if (!URL_REGEXP.test(tabs[0].url)) {
-      popupShowInvalidPage();
-    } else {
-      var url = tabs[0].url;
-      const profs = findMatchingProfiles(url);
-      profs.then((ps) => {
-        if (ps.length > 0) {
-          matchingProfiles.push(...ps);
-          updateProfilesList();
-          popupShowValidPage();
-        } else {
-          popupShowNoProfiles();
-        }
-      });
-    }
-  });
+  tab = (await browser.tabs.query({ active: true, currentWindow: true }))[0];
+
+  if (!URL_REGEXP.test(tab.url)) {
+    showPageInvalidURL();
+  } else {
+    const profs = findMatchingProfiles(tab.url);
+    profs.then((ps) => {
+      if (ps.length > 0) {
+        matchingProfiles.push(...ps);
+        updateProfilesList();
+        showPageProfilesFound();
+      } else {
+        showPageNoProfilesFound();
+      }
+    });
+  }
+
+  /**
+   * Change popup page contents according to URL validity and if profiles exist.
+   */
+  function showPageProfilesFound() {
+    document.querySelector("#popup-profile-valid").classList.remove("hidden");
+  }
+
+  function showPageNoProfilesFound() {
+    document.querySelector("#popup-profile-invalid").classList.remove("hidden");
+  }
+
+  function showPageInvalidURL() {
+    document.querySelector("#popup-page-invalid").classList.remove("hidden");
+  }
 }
 
-/*
+/**
  * Returns an array of all profiles that can be used for the argument URL.
  */
 async function findMatchingProfiles(url) {
@@ -57,8 +70,8 @@ async function findMatchingProfiles(url) {
   return res;
 }
 
-/*
- * Adds buttons for all applicable profiles for current page.
+/**
+ * Add a button for each profile applicable to current page.
  */
 function updateProfilesList() {
   const list = document.getElementById("profList");
@@ -79,15 +92,20 @@ function updateProfilesList() {
   }
 }
 
+/**
+ * Switches the provided profile's status in storage.
+ * Profile is specified by index into the variable "matchingProfiles".
+ */
 async function switchProfileStatus(index) {
-  const tabs = await browser.tabs.query({ active: true, currentWindow: true });
-
-  const tabHostname = new URL(tabs[0].url).hostname.replace(/^(www\.)/, "");
+  const tabHostname = new URL(tab.url).hostname.replace(/^(www\.)/, "");
   const profileGroupName = "profilesFor" + tabHostname;
 
   const allProfiles = await browser.storage.local.get(profileGroupName);
-  var profilesMatchingHostname = allProfiles[Object.keys(allProfiles)[0]];
+  let profilesMatchingHostname = allProfiles[Object.keys(allProfiles)[0]];
 
+  if (index >= matchingProfiles.length) {
+    return;
+  }
   const profile = matchingProfiles[index];
   profile.isModeOn = !profile.isModeOn;
 
@@ -98,41 +116,7 @@ async function switchProfileStatus(index) {
   });
 
   updateProfilesList();
-  browser.runtime.sendMessage({ action: "refreshCSS", tabId: tabs[0].id });
-}
-
-function popupShowValidPage() {
-  document.querySelector("#popup-profile-valid").classList.remove("hidden");
-}
-
-function popupShowInvalidPage() {
-  document.querySelector("#popup-page-invalid").classList.remove("hidden");
-}
-
-function popupShowNoProfiles() {
-  document.querySelector("#popup-profile-invalid").classList.remove("hidden");
+  browser.runtime.sendMessage({ action: "refreshCSS", tabId: tab.id });
 }
 
 document.addEventListener("DOMContentLoaded", onLoad);
-
-function debugStorage() {
-  console.log("Current storage:");
-  const allStorage = browser.storage.local.get();
-  allStorage.then((s) => console.log(s));
-}
-
-debugStorage();
-// setStorage();
-
-async function setStorage() {
-  let profiles = await browser.storage.local.get("profilesForbbc.co.uk");
-  profiles = profiles[Object.keys(profiles)[0]];
-  delete profiles["undefined"];
-  await browser.storage.local.set({
-    "profilesForbbc.co.uk": profiles,
-  });
-}
-
-function clearStorage() {
-  browser.storage.local.clear();
-}

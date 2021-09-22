@@ -271,3 +271,24 @@ async function deleteProfile(name, groupName) {
 }
 
 document.addEventListener("DOMContentLoaded", onLoad);
+
+/************ DEBUGGING STORAGE ************/
+
+function printStorage() {
+  console.log("Current storage:");
+  const allStorage = browser.storage.local.get();
+  allStorage.then((s) => console.log(s));
+}
+
+async function setStorage() {
+  let profiles = await browser.storage.local.get("profilesForbbc.co.uk");
+  profiles = profiles[Object.keys(profiles)[0]];
+  delete profiles["undefined"];
+  await browser.storage.local.set({
+    "profilesForbbc.co.uk": profiles,
+  });
+}
+
+function clearStorage() {
+  browser.storage.local.clear();
+}
