@@ -1,11 +1,13 @@
-# declutter-my-web
-A firefox addon for clearing your browsing life. 
+# Declutter My Web
 
-Blacklist distracting UI elements from your most-browsed websites such as embedded videos, popups, and links. Save elements to site-specific profiles, making it easy to group elements and switch the declutter mode on. 
+A firefox addon for clearing web pages of unnecessary content, while allowing you to quickly toggle this content back on if you need it.
 
-## Features:
-- Profile system so you can save and customise what collection of elements you want gone at the same time.
-- Easy right click menu to add element to blacklist. 
+## What it can do:
+
+- Blacklist distracting UI elements
+- Save elements to different profiles, and enable these profiles from the addon popup.
+- Automatically enable profiles by supplying a URL to match.
+- Apply several profiles together so you can quickly show and hide only certain groups of elements.
+- Easy right click menu to add element to blacklist.
 - Blacklist element using HTML class names, so other elements of a similar type will also be blacklisted.
-- Element highlighting system to simpify blocking elements, especially for the less-tech savy.
-- Automatically turn on reading mode for matching pages.
+- Element highlighting system to simpify blocking elements, especially for the non tech savy.
